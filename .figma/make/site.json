@@ -1,0 +1,10 @@
+{
+  "description": "This web application streamlines project collaboration by allowing users to share and analyze wireframes, enhancing design feedback and decision-making.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
