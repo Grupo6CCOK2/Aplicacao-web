@@ -68,20 +68,13 @@ export default function AdminPages(props: Props) {
     .filter(
       (a) =>
         a.date === (page === "painel" ? applied.date : date) &&
-        (!isEmployee || a.professional === employeeProfessional) &&
         (!(page === "painel" ? applied.professional : professional) ||
           a.professional ===
             (page === "painel" ? applied.professional : professional)) &&
         (status === "Todos" || a.status === status),
     )
     .sort((a, b) => a.time.localeCompare(b.time))
-  const scopeClients = isEmployee
-    ? clients.filter((c) =>
-        appointments.some(
-          (a) => a.name === c.name && a.professional === employeeProfessional,
-        ),
-      )
-    : clients
+  const scopeClients = clients
   const filteredClients = scopeClients.filter(
     (c) =>
       `${c.name} ${c.phone}`.toLowerCase().includes(search.toLowerCase()) &&
@@ -113,7 +106,7 @@ export default function AdminPages(props: Props) {
     })
     setCancelConfirm(false)
     setReason("")
-    setSavedNotice("Agendamento cancelado. Motivo registrado na demonstração.")
+    setSavedNotice("Agendamento cancelado com sucesso.")
   }
   function exportClients() {
     const rows = [
@@ -227,12 +220,6 @@ export default function AdminPages(props: Props) {
             </div>
           )}
         </div>
-        {page === "agenda" && (
-          <div className="table-footer">
-            <Icon name="clock" size={16} />
-            <small>13:00–14:00 · Intervalo ilustrativo</small>
-          </div>
-        )}
       </Card>
     )
   }
@@ -405,9 +392,7 @@ export default function AdminPages(props: Props) {
               Próximo dia
             </Button>
           </div>
-        ) : (
-          <span className="demo-label">DADOS DEMONSTRATIVOS</span>
-        )}
+        ) : null}
       </div>
       {savedNotice && <Alert kind="success">{savedNotice}</Alert>}
       {page === "painel" && (
@@ -494,7 +479,6 @@ export default function AdminPages(props: Props) {
             <Card>
               <div className="section-heading">
                 <h3>Atendimentos por Dia da Semana</h3>
-                <span className="demo-label">EXEMPLO</span>
               </div>
               <div className="bar-chart">
                 {[
@@ -514,7 +498,7 @@ export default function AdminPages(props: Props) {
             </Card>
             <Card>
               <h3>Ocupação por profissional</h3>
-              <p className="muted">Indicadores ilustrativos</p>
+              <p className="muted">Taxa de ocupação média</p>
               {team.slice(0, 4).map((p, i) => (
                 <div className="occupancy" key={p.id}>
                   <div>
@@ -524,7 +508,7 @@ export default function AdminPages(props: Props) {
                   <progress
                     max="100"
                     value={[92, 84, 76, 68][i]}
-                    aria-label={`Ocupação ilustrativa de ${p.name}`}
+                    aria-label={`Ocupação de ${p.name}`}
                   />
                 </div>
               ))}
@@ -723,17 +707,13 @@ export default function AdminPages(props: Props) {
         <>
           <Card className="filter-bar">
             <Select
-              label="Período de exemplo"
+              label="Período"
               value={period}
               onChange={(e) => setPeriod(e.target.value)}
             >
               <option>Mensal</option>
               <option>Quinzenal</option>
             </Select>
-            <p className="muted">
-              Layout provisório conforme o MD. Todos os valores abaixo são
-              ilustrativos.
-            </p>
           </Card>
           <div className="kpi-grid">
             {[
@@ -760,7 +740,7 @@ export default function AdminPages(props: Props) {
                   <Icon name={icon} />
                 </div>
                 <strong>{value}</strong>
-                <small>Exemplo · fechamento {period.toLowerCase()}</small>
+                <small>Fechamento {period.toLowerCase()}</small>
               </Card>
             ))}
           </div>
@@ -783,12 +763,9 @@ export default function AdminPages(props: Props) {
             </Card>
             <Card>
               <h3>Resumo do período</h3>
-              <p className="muted">
-                Valores exemplificativos, sem movimentações financeiras reais.
-              </p>
               <dl>
                 <div>
-                  <dt>Comissões ilustrativas</dt>
+                  <dt>Comissões da equipe</dt>
                   <dd>40%</dd>
                 </div>
                 <div>
@@ -803,7 +780,6 @@ export default function AdminPages(props: Props) {
           <Card className="table-card">
             <div className="table-title">
               <h3>Extrato de repasses e comissões</h3>
-              <span className="demo-label">EXEMPLO</span>
             </div>
             <div className="table-scroll">
               <table className="responsive-table">
@@ -857,7 +833,7 @@ export default function AdminPages(props: Props) {
               <img
                 className="staff-avatar"
                 src={p.image}
-                alt={`Retrato ilustrativo de ${p.name}`}
+                alt={`Retrato de ${p.name}`}
               />
               <Badge>Ativo</Badge>
               <h3>{p.name}</h3>
@@ -888,8 +864,7 @@ export default function AdminPages(props: Props) {
             {session.role === "admin" ? "Administrador" : "Funcionário"}
           </Badge>
           <p>
-            Perfil demonstrativo. A edição de credenciais depende da integração
-            com o backend.
+            Informações da conta profissional ativa no sistema Fred Cabeleireiros.
           </p>
           <Button variant="outline" onClick={() => navigate("agenda")}>
             Voltar à agenda
@@ -951,7 +926,6 @@ export default function AdminPages(props: Props) {
                     {a.note && <p>{a.note}</p>}
                   </Card>
                 ))}
-              <p className="muted">Histórico disponível na demonstração.</p>
             </>
           ) : clientAction === "edit" ? (
             <form

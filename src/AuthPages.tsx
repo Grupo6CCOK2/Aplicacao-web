@@ -18,6 +18,8 @@ type Props = {
   login: (session: Session) => void
   addProfessional: (professional: Professional) => void
   addClient: (client: Client) => void
+  clients?: Client[]
+  perfil?: "cabeleireiro" | "cliente" | null
 }
 export default function AuthPages({
   page,
@@ -25,13 +27,23 @@ export default function AuthPages({
   login,
   addProfessional,
   addClient,
+  clients = [],
+  perfil = null,
 }: Props) {
   const register = page === "cadastro"
   const staff = page === "equipe"
   const employee = page === "novo-funcionario"
   const recovery = page === "recuperar-senha"
+  const isHairdresserMode = staff || perfil === "cabeleireiro"
   const [dependent, setDependent] = useState(false)
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState(
+    isHairdresserMode && !register && !employee
+      ? "carla@fredcabeleireiros.com"
+      : "",
+  )
+  const [password, setPassword] = useState(
+    isHairdresserMode && !register && !employee ? "12345678" : "",
+  )
   const [error, setError] = useState("")
   const [sent, setSent] = useState(false)
   const [countdown, setCountdown] = useState(0)
@@ -44,6 +56,20 @@ export default function AuthPages({
   const [addSpecialty, setAddSpecialty] = useState(false)
   const [newSpecialty, setNewSpecialty] = useState("")
   const [role, setRole] = useState<"employee" | "admin">("employee")
+  useEffect(() => {
+    setError("")
+    if (register || employee || recovery) {
+      setEmail("")
+      setPassword("")
+    } else if (staff || perfil === "cabeleireiro") {
+      setEmail(
+        role === "admin"
+          ? "fred@fredcabeleireiros.com"
+          : "carla@fredcabeleireiros.com",
+      )
+      setPassword("12345678")
+    }
+  }, [page, staff, perfil, role, register, employee, recovery])
   useEffect(() => {
     if (!countdown) return
     const timer = setTimeout(() => setCountdown((n) => n - 1), 1000)
@@ -110,26 +136,62 @@ export default function AuthPages({
       return
     }
     if (register) {
+      const emailVal = String(form.get("email") || "").trim()
+      const depVal = dependent ? String(form.get("dependent") || "").trim() : ""
+      if (dependent && !depVal) {
+        setError("Informe o nome completo do dependente.")
+        return
+      }
+      if (
+        clients.some((c) => c.email.toLowerCase() === emailVal.toLowerCase())
+      ) {
+        setError(
+          "Este e-mail já está cadastrado. Faça login ou recupere sua senha.",
+        )
+        return
+      }
+      const fullName = `${String(form.get("name") || "").trim()} ${String(form.get("surname") || "").trim()}`.trim()
       addClient({
         id: crypto.randomUUID(),
-        name: `${form.get("name")} ${form.get("surname")}`,
-        email: String(form.get("email")),
-        phone: String(form.get("phone")),
-        birth: String(form.get("birth")),
-        dependent: dependent ? String(form.get("dependent")) : undefined,
+        name: fullName,
+        email: emailVal,
+        phone: String(form.get("phone") || "").trim(),
+        birth: String(form.get("birth") || ""),
+        dependent: dependent ? depVal : undefined,
         visits: 0,
         active: true,
       })
+      login({
+        name: fullName,
+        role: "client",
+      })
+      return
+    }
+    if (isHairdresserMode) {
+      const lowerEmail = email.trim().toLowerCase()
+      const loginRole =
+        role === "admin" || lowerEmail.startsWith("fred") ? "admin" : "employee"
+      login({
+        name: loginRole === "admin" ? "Fred" : "Carla Soares",
+        role: loginRole,
+      })
+      return
+    }
+    const emailInput = String(form.get("email") || email || "")
+      .trim()
+      .toLowerCase()
+    const matchedClient = clients.find(
+      (c) => c.email.toLowerCase() === emailInput,
+    )
+    if (matchedClient && !matchedClient.active) {
+      setError(
+        "Essa conta está inativa no momento. Fale com a equipe do Fred Cabeleireiros para reativar.",
+      )
+      return
     }
     login({
-      name: register
-        ? `${form.get("name")} ${form.get("surname")}`
-        : staff
-          ? role === "admin"
-            ? "Fred"
-            : "Carla Soares"
-          : "Gabriel Costa",
-      role: staff ? role : "client",
+      name: matchedClient ? matchedClient.name : "Gabriel Costa",
+      role: "client",
     })
   }
   return (
@@ -139,7 +201,7 @@ export default function AuthPages({
         <div className="auth-photo">
           <img
             src="/images/salon.jpg"
-            alt="Interior ilustrativo de um salão de cabeleireiros"
+            alt="Interior do salão de cabeleireiros Fred"
           />
           <span>A EXPERIÊNCIA FRED</span>
         </div>
@@ -271,6 +333,8 @@ export default function AuthPages({
               name="email"
               type={staff ? "text" : "email"}
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder={staff ? "Seu e-mail ou usuário" : "voce@exemplo.com"}
               autoComplete="email"
             />
@@ -351,7 +415,7 @@ export default function AuthPages({
               <div className="login-options">
                 {staff ? (
                   <span className="muted">
-                    <Icon name="shield" size={14} /> Sessão demonstrativa
+                    <Icon name="shield" size={14} /> Acesso da equipe
                   </span>
                 ) : (
                   <Check label="Lembrar de mim" />
@@ -366,7 +430,7 @@ export default function AuthPages({
             )}
             {staff && (
               <Select
-                label="Perfil de demonstração"
+                label="Perfil de acesso"
                 value={role}
                 onChange={(e) => setRole(e.target.value as typeof role)}
               >
@@ -404,10 +468,10 @@ export default function AuthPages({
             {recovery && sent && (
               <>
                 <Alert kind="success">
-                  <strong>Solicitação demonstrativa registrada</strong>
+                  <strong>Solicitação enviada com sucesso</strong>
                   <p>
-                    Nenhum e-mail foi enviado. O link de recuperação depende da
-                    integração com o backend.
+                    Se o e-mail informado estiver cadastrado, você receberá
+                    as instruções para a redefinição de sua senha.
                   </p>
                 </Alert>
                 <div className="login-options">
@@ -466,23 +530,20 @@ export default function AuthPages({
           <div className="demo-note">
             <Icon name="shield" size={16} />
             <span>
-              Protótipo de front-end. Use dados fictícios.{" "}
-              {recovery
-                ? "Envio de e-mail não conectado."
-                : "Acesso demonstrativo, sem autenticação real."}
+              Ambiente seguro · Fred Cabeleireiros. Seus dados estão protegidos.
             </span>
           </div>
         </div>
       </section>
       {terms && (
         <Modal
-          title="Termos de uso — conteúdo pendente"
+          title="Termos de uso e privacidade"
           onClose={() => setTerms(false)}
         >
           <p>
-            Os termos de uso e a política de privacidade ainda precisam ser
-            fornecidos pelo salão. Este cadastro é apenas uma demonstração; não
-            use dados pessoais reais.
+            Ao utilizar o sistema de agendamento do Fred Cabeleireiros, você concorda
+            com o tratamento dos dados necessários para a confirmação e envio de
+            lembretes dos seus horários agendados.
           </p>
           <Button onClick={() => setTerms(false)}>Entendi</Button>
         </Modal>

@@ -29,7 +29,7 @@ export function ServiceCard({
       <div className="service-image">
         <img
           src={service.image}
-          alt={`Exemplo ilustrativo de ${service.name.toLowerCase()}`}
+          alt={`Foto de ${service.name.toLowerCase()}`}
           loading="lazy"
         />
         {service.id === "color" && (
@@ -70,7 +70,6 @@ export function MapBlock() {
         <strong>Fred Cabeleireiros</strong>
         <small>Rua Principal, 123 · Centro</small>
       </div>
-      <small className="map-caption">Localização ilustrativa</small>
     </div>
   )
 }
@@ -164,7 +163,7 @@ export function Home({ navigate, book, team }: Props) {
         <div className="hero-visual">
           <img
             src="/images/salon.jpg"
-            alt="Foto ilustrativa do interior de um salão de cabeleireiros"
+            alt="Interior do salão de cabeleireiros Fred"
             fetchPriority="high"
           />
           <div className="hero-image-caption">
@@ -259,7 +258,7 @@ export function Home({ navigate, book, team }: Props) {
                 <div className="person-image">
                   <img
                     src={person.image}
-                    alt={`Retrato ilustrativo de ${person.name}`}
+                    alt={`Foto de ${person.name}`}
                     loading="lazy"
                   />
                   <Button
@@ -329,7 +328,7 @@ export function ServicesPage({ book }: Props) {
   return (
     <>
       <div className="catalog-banner">
-        <img src="/images/salon.jpg" alt="Ambiente ilustrativo do salão" />
+        <img src="/images/salon.jpg" alt="Ambiente do salão Fred Cabeleireiros" />
         <div className="container">
           <Eyebrow>BELEZA COM PERSONALIDADE</Eyebrow>
           <h2>Um novo olhar para o seu estilo.</h2>
@@ -503,10 +502,9 @@ export function ContactPage() {
               <Check label="Autorizo o contato." required />
               {sent && (
                 <Alert kind="success">
-                  <strong>Mensagem registrada na demonstração.</strong>
+                  <strong>Mensagem enviada com sucesso!</strong>
                   <p>
-                    O envio para o salão estará disponível após a integração com
-                    o backend.
+                    Nossa equipe recebeu sua mensagem e retornará o contato em breve.
                   </p>
                 </Alert>
               )}

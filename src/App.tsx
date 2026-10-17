@@ -33,9 +33,22 @@ const knownPages = [
   "perfil",
   "agendamento",
 ]
+function readPerfil(): "cabeleireiro" | "cliente" | null {
+  const urlParams = new URLSearchParams(window.location.search)
+  const p = urlParams.get("perfil")
+  if (p === "cabeleireiro" || p === "cliente") {
+    sessionStorage.setItem("fred-perfil", p)
+    return p
+  }
+  const saved = sessionStorage.getItem("fred-perfil")
+  if (saved === "cabeleireiro" || saved === "cliente") return saved
+  return null
+}
 function readRoute() {
   const route = location.hash.slice(1).split("?")[0]
-  return knownPages.includes(route) ? route : "inicio"
+  if (knownPages.includes(route)) return route
+  if (readPerfil() === "cabeleireiro") return "equipe"
+  return "inicio"
 }
 export default function App() {
   const [page, setPage] = useState(readRoute)
@@ -60,6 +73,106 @@ export default function App() {
   const [menu, setMenu] = useState(false)
   const [help, setHelp] = useState(false)
   useEffect(() => {
+    fetch("/api/data")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data) return
+        if (Array.isArray(data.appointments)) setAppointments(data.appointments)
+        if (Array.isArray(data.clients)) setClients(data.clients)
+        if (Array.isArray(data.team)) setTeam(data.team)
+      })
+      .catch(() => {})
+
+    let es: EventSource | null = null
+    try {
+      es = new EventSource("/api/events")
+      es.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data)
+          if (Array.isArray(payload.appointments))
+            setAppointments(payload.appointments)
+          if (Array.isArray(payload.clients)) setClients(payload.clients)
+          if (Array.isArray(payload.team)) setTeam(payload.team)
+        } catch {}
+      }
+    } catch {}
+
+    const storageListener = (e: StorageEvent) => {
+      if (e.key === "fred-appointments" && e.newValue) {
+        try {
+          setAppointments(JSON.parse(e.newValue))
+        } catch {}
+      }
+      if (e.key === "fred-clients" && e.newValue) {
+        try {
+          setClients(JSON.parse(e.newValue))
+        } catch {}
+      }
+      if (e.key === "fred-team" && e.newValue) {
+        try {
+          setTeam(JSON.parse(e.newValue))
+        } catch {}
+      }
+    }
+    window.addEventListener("storage", storageListener)
+    return () => {
+      if (es) es.close()
+      window.removeEventListener("storage", storageListener)
+    }
+  }, [])
+  function handleAddAppointment(appointment: Appointment) {
+    setAppointments((prev) => [...prev, appointment])
+    fetch("/api/appointments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(appointment),
+    }).catch(() => {})
+  }
+  function handleUpdateAppointment(id: string, update: Partial<Appointment>) {
+    setAppointments((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, ...update } : a)),
+    )
+    fetch(`/api/appointments/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(update),
+    }).catch(() => {})
+  }
+  function handleAddClient(client: Client) {
+    setClients((prev) => [...prev, client])
+    fetch("/api/clients", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(client),
+    }).catch(() => {})
+  }
+  function handleUpdateClient(id: string, update: Partial<Client>) {
+    const previousName = clients.find((c) => c.id === id)?.name
+    if (update.name && previousName) {
+      setAppointments((prev) =>
+        prev.map((a) =>
+          a.name === previousName ? { ...a, name: update.name! } : a,
+        ),
+      )
+    }
+    setClients((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, ...update } : c)),
+    )
+    fetch(`/api/clients/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(update),
+    }).catch(() => {})
+  }
+  function handleAddProfessional(professional: Professional) {
+    setTeam((prev) => [...prev, professional])
+    fetch("/api/team", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(professional),
+    }).catch(() => {})
+  }
+  useEffect(() => {
     const listener = () => {
       setPage(readRoute())
       setMenu(false)
@@ -79,7 +192,11 @@ export default function App() {
   }, [team])
   useEffect(() => {
     if (!publicPages.includes(page) && !session)
-      navigate(page === "agendamento" ? "entrar" : "equipe")
+      navigate(
+        page === "agendamento" && readPerfil() !== "cabeleireiro"
+          ? "entrar"
+          : "equipe",
+      )
     else if (adminPages.includes(page) && session?.role !== "admin")
       navigate(session?.role === "client" ? "agendamento" : "agenda")
     else if (
@@ -103,7 +220,13 @@ export default function App() {
   function book(service?: string, professional?: string) {
     setSelectedService(service || "")
     setSelectedProfessional(professional || "")
-    navigate(session?.role === "client" ? "agendamento" : "entrar")
+    navigate(
+      session?.role === "client"
+        ? "agendamento"
+        : readPerfil() === "cabeleireiro"
+          ? "equipe"
+          : "entrar",
+    )
   }
   function login(value: Session) {
     setSession(value)
@@ -254,7 +377,11 @@ export default function App() {
                 </button>
                 <button
                   className="mobile-login"
-                  onClick={() => navigate("entrar")}
+                  onClick={() =>
+                    navigate(
+                      readPerfil() === "cabeleireiro" ? "equipe" : "entrar",
+                    )
+                  }
                 >
                   Entrar
                 </button>
@@ -271,7 +398,9 @@ export default function App() {
                           ? session.role === "admin"
                             ? "painel"
                             : "agenda"
-                          : "entrar",
+                          : readPerfil() === "cabeleireiro"
+                            ? "equipe"
+                            : "entrar",
                     )
                   }
                 >
@@ -327,7 +456,6 @@ export default function App() {
                 <br />
                 Nosso cuidado.
               </strong>
-              <small>Versão demonstrativa</small>
               <Button variant="dark" onClick={logout}>
                 <Icon name="logout" size={16} />
                 Sair da conta
@@ -354,8 +482,10 @@ export default function App() {
               page={page}
               navigate={navigate}
               login={login}
-              addProfessional={(p) => setTeam((prev) => [...prev, p])}
-              addClient={(client) => setClients((prev) => [...prev, client])}
+              addProfessional={handleAddProfessional}
+              addClient={handleAddClient}
+              clients={clients}
+              perfil={readPerfil()}
             />
           ) : page === "agendamento" && session ? (
             <BookingPage
@@ -364,7 +494,7 @@ export default function App() {
               selectedService={selectedService}
               selectedProfessional={selectedProfessional}
               appointments={appointments}
-              addAppointment={(a) => setAppointments((prev) => [...prev, a])}
+              addAppointment={handleAddAppointment}
             />
           ) : session ? (
             <AdminPages
@@ -375,26 +505,8 @@ export default function App() {
               appointments={appointments}
               clients={clients}
               team={team}
-              updateAppointment={(id, update) =>
-                setAppointments((prev) =>
-                  prev.map((a) => (a.id === id ? { ...a, ...update } : a)),
-                )
-              }
-              updateClient={(id, update) => {
-                const previousName = clients.find((c) => c.id === id)?.name
-                if (update.name && previousName) {
-                  setAppointments((prev) =>
-                    prev.map((a) =>
-                      a.name === previousName
-                        ? { ...a, name: update.name! }
-                        : a,
-                    ),
-                  )
-                }
-                setClients((prev) =>
-                  prev.map((c) => (c.id === id ? { ...c, ...update } : c)),
-                )
-              }}
+              updateAppointment={handleUpdateAppointment}
+              updateClient={handleUpdateClient}
             />
           ) : null)}
       </div>
@@ -429,9 +541,8 @@ export default function App() {
               : "Acompanhe a agenda, selecione um atendimento para ver seus detalhes e atualize o status. Para cancelar, informe um motivo e confirme a ação."}
           </p>
           <p className="muted">
-            Esta é uma demonstração de front-end. Os dados são salvos apenas
-            neste navegador; não há autenticação, notificações ou pagamentos
-            reais.
+            Para dúvidas ou agendamentos especiais, entre em contato direto com
+            nossa equipe pelo canal oficial de atendimento.
           </p>
           <a
             href="https://wa.me/5511987654321"

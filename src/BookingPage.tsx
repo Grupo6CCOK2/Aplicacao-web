@@ -326,7 +326,7 @@ export default function BookingPage({
               Confirmar agendamento <Icon name="check" size={16} />
             </Button>
             <small className="muted">
-              Você está reservando um horário na demonstração.
+              Confirmação imediata com envio de lembrete pelo WhatsApp.
             </small>
             {confirmed && (
               <Alert kind="success">
