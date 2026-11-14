@@ -1,0 +1,128 @@
+.employee-profile > header {
+  margin-bottom: 24px;
+}
+.employee-profile > header > span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--burgundy);
+  letter-spacing: 0.12em;
+}
+.employee-profile h1 {
+  font:
+    700 2rem "Playfair Display",
+    serif;
+  color: var(--espresso);
+  margin: 4px 0;
+}
+.employee-profile p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.employee-profile-grid {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.5fr);
+  gap: 22px;
+  align-items: start;
+}
+.employee-profile-summary,
+.employee-profile-form {
+  min-width: 0;
+  background: white;
+  border: 1px solid var(--border-warm);
+  border-radius: 14px;
+  padding: 28px;
+}
+.employee-profile-summary {
+  text-align: center;
+  background: linear-gradient(var(--bg-cream) 96px, white 96px);
+}
+.employee-profile-summary > img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border: 5px solid white;
+  border-radius: 50%;
+  margin: 8px auto 15px;
+  display: block;
+  box-shadow: 0 3px 14px #23141212;
+}
+.employee-profile h2 {
+  color: var(--espresso);
+  font-size: 1rem;
+  margin: 0 0 5px;
+}
+.employee-profile-status {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.73rem;
+  color: var(--burgundy);
+  background: var(--bg-cream);
+}
+.employee-profile-specialties {
+  border-top: 1px solid var(--border-warm);
+  margin-top: 24px;
+  padding-top: 20px;
+  text-align: left;
+}
+.employee-profile-specialties h3 {
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+}
+.employee-profile-specialties span {
+  display: inline-block;
+  font-size: 0.73rem;
+  margin: 0 5px 6px 0;
+  padding: 5px 9px;
+  background: var(--bg-cream);
+  border-radius: 6px;
+}
+.employee-profile-form > p {
+  margin-bottom: 22px;
+}
+.employee-profile-form > div {
+  margin-bottom: 18px;
+}
+.employee-profile-form label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.employee-profile-form small {
+  display: block;
+  font-size: 0.73rem;
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+.employee-profile-note {
+  background: var(--bg-page);
+  border: 1px solid var(--border-warm);
+  border-radius: 9px;
+  padding: 14px;
+}
+.employee-profile-note strong {
+  font-size: 0.8rem;
+}
+.employee-profile-note p {
+  font-size: 0.76rem;
+  margin-top: 4px;
+}
+.employee-profile-error {
+  color: var(--burgundy) !important;
+}
+@media (max-width: 1100px) {
+  .employee-profile-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .employee-profile-summary,
+  .employee-profile-form {
+    padding: 22px;
+  }
+  .employee-profile-form .btn-burgundy {
+    width: 100%;
+  }
+}

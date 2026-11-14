@@ -1,0 +1,197 @@
+.client-dashboard {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+.client-dashboard button {
+  font-family: inherit;
+}
+.client-sidebar {
+  gap: 32px;
+}
+.client-sidebar > button {
+  margin-top: auto;
+}
+.client-content {
+  min-width: 0;
+}
+.client-appointments {
+  margin-top: 22px;
+}
+.client-card {
+  min-width: 0;
+}
+.client-header > div,
+.client-booking > div,
+.client-dashboard .form-row-2 > div {
+  min-width: 0;
+}
+.client-header h1,
+.client-booking,
+.client-card p {
+  overflow-wrap: anywhere;
+}
+.client-dashboard .form-row-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.client-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.client-card-header h2 {
+  margin-bottom: 0 !important;
+}
+.client-count {
+  background: var(--bg-cream);
+  color: var(--text-muted);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+}
+.client-booking-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  min-height: 68px;
+  background: var(--bg-cream);
+  border-radius: 10px;
+  color: var(--espresso);
+}
+.client-booking-date strong {
+  font-size: 1.65rem;
+  line-height: 1.2;
+}
+.client-booking-date span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.client-booking-price {
+  font-size: 1rem;
+  color: var(--espresso);
+  white-space: nowrap;
+}
+.client-booking-actions {
+  flex-direction: column;
+  align-items: flex-end !important;
+  min-width: 105px;
+}
+.client-avatar-row > div {
+  min-width: 0;
+}
+.client-avatar-row img {
+  flex-shrink: 0;
+}
+.client-dependent-row {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.client-dependent-row > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.client-dashboard input,
+.client-dashboard select {
+  min-width: 0;
+}
+.client-dashboard button:focus-visible,
+.client-dashboard input:focus-visible,
+.client-dashboard select:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+@media (max-width: 1200px) {
+  .client-profile-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .client-booking {
+    grid-template-columns: 64px minmax(0, 1fr) auto !important;
+  }
+  .client-booking-price {
+    grid-column: 2;
+  }
+  .client-booking-actions {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+  .client-booking-date {
+    grid-row: 1 / 3;
+  }
+}
+@media (max-width: 800px) {
+  .client-dashboard .form-row-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .client-dashboard {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .client-sidebar {
+    padding: 18px !important;
+    gap: 16px;
+  }
+  .client-sidebar > div {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+  }
+  .client-sidebar > div > span {
+    width: 100%;
+    margin-bottom: 4px !important;
+  }
+  .client-sidebar > button {
+    align-self: flex-start;
+    padding: 8px 14px !important;
+  }
+  .client-content {
+    padding: 24px 18px !important;
+  }
+  .client-header h1 {
+    font-size: 1.75rem !important;
+  }
+}
+@media (max-width: 520px) {
+  .client-card {
+    padding: 18px !important;
+  }
+  .client-header > button {
+    width: 100%;
+  }
+  .client-booking {
+    grid-template-columns: 54px minmax(0, 1fr) !important;
+    gap: 10px 14px !important;
+    padding: 16px !important;
+  }
+  .client-booking-date {
+    width: 54px;
+    grid-row: 1;
+  }
+  .client-booking-price {
+    grid-column: 2;
+  }
+  .client-booking-actions {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    flex-direction: row;
+    align-items: center !important;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-warm);
+  }
+  .client-avatar-row {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 12px !important;
+  }
+  .client-avatar-row > div {
+    width: 100%;
+  }
+  .client-dashboard .form-row-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .client-profile-grid .btn-burgundy {
+    width: 100%;
+  }
+}

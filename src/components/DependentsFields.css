@@ -1,0 +1,66 @@
+.signup-dependents {
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid var(--border-warm);
+  border-radius: 12px;
+  background: var(--bg-page);
+}
+.signup-dependents-heading,
+.signup-dependent-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.signup-dependents-heading h3 {
+  font-size: 0.92rem;
+  color: var(--espresso);
+  margin: 0;
+}
+.signup-dependents-heading p {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+}
+.signup-dependents-heading > span {
+  background: var(--bg-cream);
+  color: var(--espresso);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+}
+.signup-dependent {
+  margin-top: 14px;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--border-warm);
+  border-radius: 9px;
+}
+.signup-dependent-heading {
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+}
+.signup-dependent-heading button,
+.signup-add-dependent {
+  background: transparent;
+  border: 0;
+  color: var(--burgundy);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.signup-add-dependent {
+  margin-top: 14px;
+  padding: 5px 0;
+}
+.signup-dependent label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.signup-dependents button:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
