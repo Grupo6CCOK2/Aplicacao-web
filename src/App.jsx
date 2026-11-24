@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { agendaSalaoInicial } from "./data/agendaSalao";
+import { aplicarBloqueio, horarioDisponivel, paraISO, validarCancelamento } from "./utils/agenda";
 import { agendamentosIniciais } from "./data/agendamentos";
 import { funcionariosIniciais } from "./data/funcionarios";
 import Navbar from "./components/Navbar";
@@ -15,11 +17,29 @@ import AdminDashboard from "./components/AdminDashboard";
 
 export default function App() {
   const [funcionarios, setFuncionarios] = useState(funcionariosIniciais);
-  const [agendamentos, setAgendamentos] = useState(agendamentosIniciais);
-  const adicionarAgendamento = (novo) =>
-    setAgendamentos((atuais) => [novo, ...atuais]);
-  const cancelarAgendamento = (id) =>
-    setAgendamentos((atuais) => atuais.filter((item) => item.id !== id));
+  const [agendamentos, setAgendamentos] = useState(() => [...agendamentosIniciais.map((item) => ({ ...item, clienteId: "cliente-demo", cliente: "Sam", hora: item.horario })), ...agendaSalaoInicial]);
+  const [bloqueios, setBloqueios] = useState([]);
+  const meusAgendamentos = agendamentos.filter((item) => item.clienteId === "cliente-demo");
+  const adicionarAgendamento = (novo) => {
+    if (agendamentos.some((item) => item.id === novo.id)) return { ok: false, erro: 'Esta reserva já foi confirmada.' };
+    if (!horarioDisponivel(paraISO(novo.data), novo.horario, novo, agendamentos, undefined, bloqueios)) return { ok: false, erro: 'O horário ficou indisponível. Escolha outro.' };
+    setAgendamentos((atuais) => [{ ...novo, clienteId: 'cliente-demo', cliente: perfilCliente.nome, telefone: perfilCliente.telefone, hora: novo.horario }, ...atuais]);
+    return { ok: true };
+  };
+  const cancelarAgendamento = (id, motivo) => {
+    const item = agendamentos.find((reserva) => reserva.id === id && reserva.clienteId === 'cliente-demo');
+    const erro = validarCancelamento(item, motivo);
+    if (erro) return { ok: false, erro };
+    setAgendamentos((atuais) => atuais.map((reserva) => reserva.id === id ? { ...reserva, status: 'Cancelado', motivoCancelamento: motivo?.trim() || '', canceladoPor: 'cliente', canceladoEm: new Date().toISOString() } : reserva));
+    return { ok: true };
+  };
+  const bloquearAgenda = (bloqueio) => {
+    const resultado = aplicarBloqueio(agendamentos, bloqueio);
+    if (!resultado.ok) return resultado;
+    setAgendamentos(resultado.agendamentos);
+    setBloqueios((atuais) => [...atuais, bloqueio]);
+    return resultado;
+  };
   const [paginaAtual, setPaginaAtual] = useState("inicio");
   const [usuarioLogado, setUsuarioLogado] = useState(null);
   const [perfilCliente, setPerfilCliente] = useState({
@@ -100,9 +120,11 @@ export default function App() {
           <BookingPage
             key={servicoPreSelecionado}
             servicoInicial={servicoPreSelecionado}
-            meusAgendamentos={agendamentos}
+            meusAgendamentos={meusAgendamentos}
+            agendaCompleta={agendamentos}
+            bloqueios={bloqueios}
+            aoVerMeusAgendamentos={() => mudarPagina("cliente")}
             aoAdicionarAgendamento={adicionarAgendamento}
-            aoCancelarAgendamento={cancelarAgendamento}
           />
         )}
 
@@ -115,7 +137,7 @@ export default function App() {
             }}
             dependentes={dependentes}
             setDependentes={setDependentes}
-            agendamentos={agendamentos}
+            agendamentos={meusAgendamentos}
             cancelarAgendamento={cancelarAgendamento}
             usuarioLogado={usuarioLogado}
             aoIrParaAgendamento={() => mudarPagina("agendamento")}
@@ -140,6 +162,11 @@ export default function App() {
 
         {paginaAtual === "admin" && (
           <AdminDashboard
+            agendamentos={agendamentos}
+            setAgendamentos={setAgendamentos}
+            bloqueios={bloqueios}
+            aoAplicarBloqueio={bloquearAgenda}
+            aoRemoverBloqueio={(id) => setBloqueios((atuais) => atuais.filter((item) => item.id !== id))}
             usuarioLogado={usuarioLogado}
             funcionarios={funcionarios}
             setFuncionarios={setFuncionarios}

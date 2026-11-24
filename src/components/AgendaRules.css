@@ -1,0 +1,41 @@
+.agenda-dialog { width: min(560px, calc(100% - 32px)); max-height: 85dvh; overflow-y: auto; margin: auto; padding: 26px; border: 1px solid var(--border-warm); border-radius: 16px; color: var(--espresso); background: var(--bg-page); font: inherit; }
+.agenda-dialog::backdrop { background: #23141285; }
+.agenda-dialog > header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
+.agenda-dialog h2 { font: 700 1.55rem 'Playfair Display', serif; margin: 0; }
+.agenda-dialog header > button { border: 0; background: transparent; color: var(--espresso); cursor: pointer; font-size: 24px; padding: 0 5px; }
+.agenda-dialog p { color: var(--text-muted); font-size: .88rem; margin: 12px 0; }
+.agenda-dialog .agenda-step { font-size: .72rem; color: var(--burgundy); font-weight: 700; }
+.agenda-review { border: 1px solid var(--border-warm); background: var(--bg-cream); border-radius: 10px; padding: 16px; margin: 15px 0; }
+.agenda-review p { margin: 5px 0; }
+.agenda-dialog label, .agenda-block-manager label { display: block; font-size: .8rem; font-weight: 600; margin: 12px 0 7px; }
+.agenda-dialog textarea, .agenda-block-manager input, .agenda-block-manager select { width: 100%; padding: 11px 13px; border: 1px solid var(--border-warm); border-radius: 8px; background: white; color: var(--espresso); font: inherit; font-size: .85rem; min-width: 0; }
+.agenda-dialog textarea { min-height: 100px; resize: vertical; }
+.agenda-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.agenda-dialog-actions > button:not(.btn-burgundy), .agenda-block-list button { border: 1px solid var(--border-warm); border-radius: 8px; background: white; color: var(--espresso); font: inherit; font-size: .8rem; padding: 11px 15px; cursor: pointer; }
+.agenda-dialog-actions .btn-burgundy { padding: 11px 15px; font-size: .75rem; }
+.agenda-dialog button:disabled { opacity: .5; cursor: not-allowed; }
+.agenda-dialog button:focus-visible, .agenda-dialog textarea:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.agenda-error { color: var(--burgundy) !important; margin: 12px 0; font-size: .85rem; }
+.agenda-notice { background: var(--bg-cream); border-radius: 8px; padding: 13px 16px; color: var(--espresso); font-size: .85rem; margin: 15px 0; }
+.agenda-block-manager { padding: 22px; border: 1px solid var(--border-warm); border-radius: 14px; background: white; margin: 24px 0; }
+.agenda-block-manager h2 { font-size: 1rem; margin-bottom: 7px; }
+.agenda-block-manager > p { font-size: .85rem; color: var(--text-muted); }
+.agenda-block-fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; }
+.agenda-block-manager form > button { margin-top: 17px; }
+.agenda-affected-list { max-height: 240px; overflow: auto; padding-left: 20px; font-size: .83rem; }
+.agenda-affected-list li { margin: 12px 0; }
+.agenda-block-list { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-warm); }
+.agenda-block-list h3 { font-size: .85rem; }
+.agenda-block-list > div { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-warm); font-size: .8rem; }
+.agenda-block-list p { margin-top: 4px; color: var(--text-muted); }
+.agenda-loyalty { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px; border: 1px solid var(--border-warm); border-radius: 14px; background: var(--bg-cream); margin-top: 22px; }
+.agenda-loyalty span { font-size: .65rem; font-weight: 700; letter-spacing: .08em; color: var(--burgundy); }
+.agenda-loyalty h2 { font-size: 1.05rem; margin: 7px 0; }
+.agenda-loyalty p { font-size: .84rem; color: var(--text-muted); }
+.agenda-loyalty small { display: block; margin-top: 6px; font-size: .7rem; color: var(--text-muted); }
+.agenda-loyalty-progress { width: 130px; flex-shrink: 0; text-align: center; }
+.agenda-loyalty-progress strong { font-size: 1.8rem; }
+.agenda-loyalty progress { display: block; width: 100%; height: 8px; accent-color: var(--burgundy); margin-top: 6px; }
+.agenda-status-note { font-size: .75rem; color: var(--text-muted); margin-top: 7px; max-width: 220px; overflow-wrap: anywhere; }
+@media(max-width: 800px) { .agenda-block-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media(max-width: 500px) { .agenda-loyalty { flex-direction: column; align-items: stretch; } .agenda-loyalty-progress { width: 100%; } .agenda-block-fields { grid-template-columns: minmax(0, 1fr); } .agenda-dialog-actions > button { width: 100%; } .agenda-dialog { padding: 20px; } }

@@ -1,0 +1,43 @@
+const exemplos = [
+    {
+      id: 1,
+      hora: "09:00",
+      cliente: "Marina Costa",
+      telefone: "(11) 98765-4321",
+      profissional: "Camila Alves",
+      servico: "Corte e finalização",
+      valor: "R$ 120,00",
+      status: "Confirmado",
+    },
+    {
+      id: 2,
+      hora: "10:00",
+      cliente: "Ana Lima",
+      telefone: "(11) 98765-4321",
+      profissional: "Fred Santos",
+      servico: "Coloração e mechas",
+      valor: "R$ 280,00",
+      status: "Em atendimento",
+    },
+    {
+      id: 3,
+      hora: "11:00",
+      cliente: "Lucas Mendes",
+      telefone: "(11) 98765-8899",
+      profissional: "Camila Alves",
+      servico: "Tratamento capilar",
+      valor: "R$ 150,00",
+      status: "Confirmado",
+    },
+    {
+      id: 4,
+      hora: "13:00",
+      cliente: "Camila Alves",
+      telefone: "(11) 98765-7744",
+      profissional: "Julia Rocha",
+      servico: "Corte e finalização",
+      valor: "R$ 95,00",
+      status: "Aguardando",
+    },
+  ];
+export const agendaSalaoInicial = exemplos.map((item) => ({ ...item, id: 'salao-' + item.id, clienteId: 'outro-' + item.id, data: '11/11/2026', horario: item.hora, duracao: item.servico.includes('Coloração') ? '120 min' : '60 min' }));

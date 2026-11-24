@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { dataLocal, horarioDisponivel } from "../utils/agenda";
+import { useRef, useState } from "react";
+import AgendaDialog from "./AgendaDialog";
+import { useAgora } from "../hooks/useAgora";
+import { dataLocal, gerarHorarios, horarioDisponivel, horarioFinal } from "../utils/agenda";
 
 const servicosDisponiveis = [
   {
@@ -76,24 +78,21 @@ const servicosDisponiveis = [
   },
 ];
 
-const horariosGrade = [
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:30",
-];
+const horariosGrade = gerarHorarios();
 
 export default function BookingPage({
   servicoInicial,
   meusAgendamentos,
   aoAdicionarAgendamento,
-  aoCancelarAgendamento,
+  agendaCompleta = meusAgendamentos,
+  bloqueios = [],
+  aoVerMeusAgendamentos,
 }) {
+  const agora = useAgora();
+  const confirmando = useRef(false);
+  const [reservaEmRevisao, setReservaEmRevisao] = useState(null);
+  const [reservaConfirmada, setReservaConfirmada] = useState(null);
+  const estaDisponivel = (data, hora, servico) => horarioDisponivel(data, hora, servico, agendaCompleta, agora, bloqueios);
   const [servicoSelecionado, setServicoSelecionado] = useState(
     servicoInicial || "Corte Masculino",
   );
@@ -136,7 +135,7 @@ export default function BookingPage({
           new Date(inicio.getFullYear(), inicio.getMonth(), dia),
         );
         return horariosGrade.some((hora) =>
-          horarioDisponivel(data, hora, dadosServico, meusAgendamentos),
+          estaDisponivel(data, hora, dadosServico),
         );
       }),
     };
@@ -155,40 +154,28 @@ export default function BookingPage({
   const prontoParaConfirmar = Boolean(
     dataISO &&
     horarioSelecionado &&
-    horarioDisponivel(
+    estaDisponivel(
       dataISO,
       horarioSelecionado,
-      dadosServico,
-      meusAgendamentos,
-    ),
+      dadosServico),
   );
 
+  const revisarAgendamento = () => {
+    if (!prontoParaConfirmar) { setErro('Este horário não está disponível. Escolha outro.'); return; }
+    setErro('');
+    confirmando.current = false;
+    setReservaEmRevisao({ id: crypto.randomUUID(), duracao: dadosServico.duracao, servico: dadosServico.titulo, profissional: dadosServico.profissional, data: dataFormatada, horario: horarioSelecionado, valor: dadosServico.preco, status: 'Confirmado' });
+  };
   const confirmarAgendamento = () => {
-    if (!prontoParaConfirmar) {
-      setErro("Este horário não está disponível. Escolha outro.");
-      return;
-    }
-    setErro("");
-
-    const novo = {
-      id: crypto.randomUUID(),
-      duracao: dadosServico.duracao,
-      servico: dadosServico.titulo,
-      profissional: dadosServico.profissional,
-      data: dataFormatada,
-      horario: horarioSelecionado,
-      valor: dadosServico.preco,
-      status: "Confirmado",
-    };
-
-    aoAdicionarAgendamento(novo);
+    if (confirmando.current || !reservaEmRevisao) return;
+    confirmando.current = true;
+    const resultado = aoAdicionarAgendamento(reservaEmRevisao);
+    if (!resultado.ok) { confirmando.current = false; setErro(resultado.erro); return; }
+    setReservaConfirmada(reservaEmRevisao);
+    setReservaEmRevisao(null);
     setDiaSelecionado(null);
     setHorarioSelecionado(null);
-    setModalAberto(true);
-  };
-
-  const cancelarAgendamento = (id) => {
-    aoCancelarAgendamento(id);
+    setErro('');
   };
 
   return (
@@ -413,12 +400,10 @@ export default function BookingPage({
                 <div className="time-slots-grid" style={{ marginTop: "12px" }}>
                   {horariosGrade.map((hora) => {
                     const ativo = horarioSelecionado === hora;
-                    const disponivel = horarioDisponivel(
+                    const disponivel = estaDisponivel(
                       dataISO,
                       hora,
-                      dadosServico,
-                      meusAgendamentos,
-                    );
+                      dadosServico);
                     return (
                       <button
                         key={hora}
@@ -432,7 +417,7 @@ export default function BookingPage({
                             : {}),
                         }}
                       >
-                        {hora}
+                        {hora}<small style={{ display: 'block', fontSize: '.65rem', fontWeight: 400 }}>até {horarioFinal(hora, dadosServico.duracao)}</small>
                       </button>
                     );
                   })}
@@ -486,7 +471,7 @@ export default function BookingPage({
                       : styles.summaryPlaceholder
                   }
                 >
-                  {horarioSelecionado || "Selecione"}
+                  {horarioSelecionado ? `${horarioSelecionado} às ${horarioFinal(horarioSelecionado, dadosServico.duracao)}` : "Selecione"}
                 </strong>
               </div>
               <div style={styles.summaryRow}>
@@ -505,14 +490,14 @@ export default function BookingPage({
             <button
               type="button"
               disabled={!prontoParaConfirmar}
-              onClick={confirmarAgendamento}
+              onClick={revisarAgendamento}
               style={
                 prontoParaConfirmar
                   ? styles.confirmBtnActive
                   : styles.confirmBtnDisabled
               }
             >
-              Confirmar Agendamento ✓
+              Revisar agendamento →
             </button>
 
             {erro && (
@@ -530,6 +515,16 @@ export default function BookingPage({
         </div>
       </section>
 
+      {reservaEmRevisao && <AgendaDialog titulo="Confira seu agendamento" aoFechar={() => setReservaEmRevisao(null)}>
+        <p>Revise os dados. O horário só será reservado quando você confirmar.</p>
+        <div className="agenda-review"><strong>{reservaEmRevisao.servico}</strong><p>{reservaEmRevisao.profissional}</p><p>{reservaEmRevisao.data} · {reservaEmRevisao.horario} às {horarioFinal(reservaEmRevisao.horario, reservaEmRevisao.duracao)}</p><p>{reservaEmRevisao.duracao} · {reservaEmRevisao.valor}</p></div>
+        {erro && <p className="agenda-error" role="alert">{erro}</p>}
+        <div className="agenda-dialog-actions"><button autoFocus type="button" onClick={() => { setReservaEmRevisao(null); setErro(''); }}>Refazer agendamento</button><button type="button" className="btn-burgundy" onClick={confirmarAgendamento}>Confirmar agendamento</button></div>
+      </AgendaDialog>}
+      {reservaConfirmada && <AgendaDialog titulo="Agendamento confirmado!" aoFechar={() => setReservaConfirmada(null)}>
+        <p role="status">Seu horário foi reservado com sucesso.</p><div className="agenda-review"><strong>{reservaConfirmada.servico}</strong><p>{reservaConfirmada.profissional}</p><p>{reservaConfirmada.data} · {reservaConfirmada.horario} às {horarioFinal(reservaConfirmada.horario, reservaConfirmada.duracao)}</p></div>
+        <div className="agenda-dialog-actions"><button type="button" autoFocus onClick={() => setReservaConfirmada(null)}>Fechar</button>{aoVerMeusAgendamentos && <button type="button" className="btn-burgundy" onClick={aoVerMeusAgendamentos}>Ver meus agendamentos</button>}</div>
+      </AgendaDialog>}
       {/* ==================== MODAL: MEUS AGENDAMENTOS ==================== */}
       {modalAberto && (
         <div style={styles.modalBackdrop} onClick={() => setModalAberto(false)}>
@@ -579,14 +574,7 @@ export default function BookingPage({
                           {ag.status}
                         </span>
 
-                        {isConfirmado && (
-                          <button
-                            onClick={() => cancelarAgendamento(ag.id)}
-                            style={styles.cancelLink}
-                          >
-                            Cancelar
-                          </button>
-                        )}
+
                       </div>
                     </div>
                   );

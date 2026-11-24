@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "./DashboardLayout.css";
-import { filtrarAgenda } from "../utils/agenda";
+import { filtrarAgenda, dataLocal, horarioFinal } from "../utils/agenda";
 import FinancialDashboard from "./FinancialDashboard";
+import AgendaBlockManager from "./AgendaBlockManager";
 import NewEmployeeForm from "./NewEmployeeForm";
 import RemoveEmployeeDialog from "./RemoveEmployeeDialog";
 
@@ -9,6 +10,11 @@ export default function AdminDashboard({
   usuarioLogado,
   funcionarios,
   setFuncionarios,
+  agendamentos,
+  setAgendamentos,
+  bloqueios = [],
+  aoAplicarBloqueio,
+  aoRemoverBloqueio,
 }) {
   const [abaAtiva, setAbaAtiva] = useState("visao-geral");
   const [modoFinanceiro, setModoFinanceiro] = useState(false);
@@ -25,67 +31,26 @@ export default function AdminDashboard({
   const [avisoFuncionario, setAvisoFuncionario] = useState("");
 
   // Filtros da Visão Geral / Financeiro
-  const [filtroData, setFiltroData] = useState("2026-11-11");
+  const [filtroData, setFiltroData] = useState(dataLocal);
   const [filtroProfissional, setFiltroProfissional] = useState("");
 
   const [filtrosAplicados, setFiltrosAplicados] = useState({
-    data: "2026-11-11",
+    data: dataLocal(),
     busca: "",
   });
   // Lista de Funcionários
 
   // Lista de Agendamentos
-  const [agendamentos, setAgendamentos] = useState([
-    {
-      id: 1,
-      hora: "09:00",
-      cliente: "Marina Costa",
-      telefone: "(11) 98765-4321",
-      profissional: "Camila Alves",
-      servico: "Corte e finalização",
-      valor: "R$ 120,00",
-      status: "Confirmado",
-    },
-    {
-      id: 2,
-      hora: "10:00",
-      cliente: "Ana Lima",
-      telefone: "(11) 98765-4321",
-      profissional: "Fred Santos",
-      servico: "Coloração e mechas",
-      valor: "R$ 280,00",
-      status: "Em atendimento",
-    },
-    {
-      id: 3,
-      hora: "11:00",
-      cliente: "Lucas Mendes",
-      telefone: "(11) 98765-8899",
-      profissional: "Camila Alves",
-      servico: "Tratamento capilar",
-      valor: "R$ 150,00",
-      status: "Confirmado",
-    },
-    {
-      id: 4,
-      hora: "13:00",
-      cliente: "Camila Alves",
-      telefone: "(11) 98765-7744",
-      profissional: "Julia Rocha",
-      servico: "Corte e finalização",
-      valor: "R$ 95,00",
-      status: "Aguardando",
-    },
-  ]);
+
 
   const agendaFiltrada = filtrarAgenda(
     agendamentos.map((ag) => ({ ...ag, data: ag.data || "2026-11-11" })),
     filtrosAplicados.data,
     filtrosAplicados.busca,
   );
-  const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(
-    agendamentos[1],
-  );
+  const [selecao, setSelecao] = useState(agendamentos[1]?.id ?? null);
+  const agendamentoSelecionado = agendamentos.find((item) => item.id === selecao) || null;
+  const setAgendamentoSelecionado = (item) => setSelecao(item?.id ?? null);
   const [motivoCancelamento, setMotivoCancelamento] = useState("");
 
   // Lista de Clientes
@@ -519,7 +484,7 @@ export default function AdminDashboard({
                                 : "#ffffff",
                           }}
                         >
-                          <td style={styles.tdBold}>{ag.hora}</td>
+                          <td style={styles.tdBold}>{ag.hora || ag.horario} às {horarioFinal(ag.hora || ag.horario, ag.duracao)}</td>
                           <td style={styles.tdBold}>{ag.cliente}</td>
                           <td style={styles.td}>{ag.profissional}</td>
                           <td style={styles.td}>{ag.servico}</td>
@@ -591,6 +556,7 @@ export default function AdminDashboard({
               </div>
             </div>
 
+            <AgendaBlockManager agenda={agendamentos} bloqueios={bloqueios} aoAplicar={aoAplicarBloqueio} aoRemover={aoRemoverBloqueio} />
             <div
               className="dashboard-details"
               style={{ ...styles.bottomGrid, marginTop: "24px" }}
@@ -600,6 +566,7 @@ export default function AdminDashboard({
                   <table style={styles.table}>
                     <thead>
                       <tr style={styles.tableHeaderRow}>
+                        <th style={styles.th}>DATA</th>
                         <th style={styles.th}>HORÁRIO</th>
                         <th style={styles.th}>CLIENTE</th>
                         <th style={styles.th}>PROFISSIONAL</th>
@@ -632,7 +599,8 @@ export default function AdminDashboard({
                                 : "#ffffff",
                           }}
                         >
-                          <td style={styles.tdBold}>{ag.hora}</td>
+                          <td style={styles.td}>{ag.data}</td>
+                          <td style={styles.tdBold}>{ag.hora || ag.horario} às {horarioFinal(ag.hora || ag.horario, ag.duracao)}</td>
                           <td style={styles.tdBold}>{ag.cliente}</td>
                           <td style={styles.td}>{ag.profissional}</td>
                           <td style={styles.td}>{ag.servico}</td>

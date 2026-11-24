@@ -1,5 +1,9 @@
 import { useState } from "react";
 import "./ClientDashboard.css";
+import CancelBookingDialog from "./CancelBookingDialog";
+import LoyaltyCard from "./LoyaltyCard";
+import { horarioFinal, podeCancelar } from "../utils/agenda";
+import { useAgora } from "../hooks/useAgora";
 
 export default function ClientDashboard({
   aoIrParaAgendamento,
@@ -11,6 +15,9 @@ export default function ClientDashboard({
   dependentes,
   setDependentes,
 }) {
+  const agora = useAgora();
+  const [cancelando, setCancelando] = useState(null);
+  const [avisoCancelamento, setAvisoCancelamento] = useState("");
   const [abaAtiva, setAbaAtiva] = useState("agendamentos");
 
   // Estado do perfil do usuário editável
@@ -94,6 +101,8 @@ export default function ClientDashboard({
               </button>
             </div>
 
+            <LoyaltyCard agendamentos={agendamentos} agora={agora} />
+            {avisoCancelamento && <p className="agenda-notice" role="status">{avisoCancelamento}</p>}
             <div
               className="client-card client-appointments"
               style={styles.card}
@@ -153,7 +162,7 @@ export default function ClientDashboard({
                           Profissional: <strong>{item.profissional}</strong>
                         </span>
                         <span style={styles.bookingDetails}>
-                          {item.data} às {item.horario}
+                          {item.data} · {item.horario} às {horarioFinal(item.horario, item.duracao)}
                         </span>
                       </div>
 
@@ -166,19 +175,22 @@ export default function ClientDashboard({
                       >
                         <span
                           style={
-                            item.status === "Confirmado"
+                            item.status === "Cancelado" || item.status === "Concluído"
+                              ? { ...styles.statusWaiting, backgroundColor: 'var(--bg-cream-strong)', color: 'var(--text-muted)' }
+                              : item.status === "Confirmado"
                               ? styles.statusConfirmed
                               : styles.statusWaiting
                           }
                         >
                           {item.status}
                         </span>
-                        <button
-                          onClick={() => cancelarAgendamento(item.id)}
+                        {podeCancelar(item, agora) && <button
+                          onClick={() => { setAvisoCancelamento(""); setCancelando(item); }}
                           style={styles.cancelBtn}
                         >
                           Cancelar
-                        </button>
+                        </button>}
+                        {item.status === "Cancelado" && <span className="agenda-status-note">{item.canceladoPor === "admin" ? "Cancelado pelo salão" : "Cancelado por você"}{item.motivoCancelamento ? `: ${item.motivoCancelamento}` : ""}</span>}
                       </div>
                     </div>
                   ))}
@@ -395,6 +407,7 @@ export default function ClientDashboard({
           </div>
         )}
       </div>
+      {cancelando && <CancelBookingDialog agendamento={cancelando} aoFechar={() => setCancelando(null)} aoConfirmar={(id, motivo) => { const resultado = cancelarAgendamento(id, motivo); if (resultado.ok) setAvisoCancelamento("Agendamento cancelado. O horário foi liberado."); return resultado; }} />}
     </div>
   );
 }
