@@ -42,3 +42,8 @@
     padding: 24px 20px !important;
   }
 }
+.google-review-card { padding: 28px; border: 1px solid var(--border-warm); border-radius: 14px; background: white; }
+.google-review-card > span { font-size: .75rem; color: var(--brand-blue); letter-spacing: .08em; font-weight: 700; }
+.google-review-card h2 { font: 700 1.5rem 'Playfair Display', serif; margin: 10px 0; }
+.google-review-card p { color: var(--text-muted); margin-bottom: 20px; font-size: .9rem; }
+

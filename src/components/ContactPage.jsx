@@ -65,6 +65,7 @@ export default function ContactPage() {
               </a>
             </div>
           </div>
+          <div className="google-review-card"><span>CONTE COMO FOI SUA VISITA</span><h2>Gostou do nosso atendimento?</h2><p>Sua avaliação ajuda outras pessoas a conhecerem o Fred Cabeleireiros.</p><a className="btn-burgundy" href={contato.avaliacaoUrl} target="_blank" rel="noreferrer">Avaliar no Google</a></div>
         </div>
 
         {/* COLUNA DIREITA: Formulário Enviar Mensagem */}
@@ -190,7 +191,7 @@ const styles = {
     border: "1px solid var(--border-warm)",
     borderRadius: "var(--radius-lg)",
     overflow: "hidden",
-    boxShadow: "0 8px 24px rgba(35, 20, 18, 0.04)",
+    boxShadow: "0 8px 24px rgba(17, 18, 20, 0.04)",
   },
   mapFooter: {
     padding: "16px 22px",
@@ -220,7 +221,7 @@ const styles = {
     border: "1px solid var(--border-warm)",
     borderRadius: "var(--radius-lg)",
     padding: "32px 36px",
-    boxShadow: "0 10px 28px rgba(35, 20, 18, 0.05)",
+    boxShadow: "0 10px 28px rgba(17, 18, 20, 0.05)",
   },
   formTitle: {
     fontFamily: "'Playfair Display', serif",

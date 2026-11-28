@@ -1,9 +1,9 @@
 export const services = ["Coloração", "Corte", "Manicure", "Outros"];
 export const colors = [
-  "var(--burgundy)",
-  "var(--fin-chart)",
-  "var(--gold)",
   "var(--espresso)",
+  "var(--brand-blue)",
+  "#8a97a8",
+  "var(--burgundy)",
 ];
 const names = [
   "Bruno Costa",

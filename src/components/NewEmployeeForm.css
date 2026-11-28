@@ -103,7 +103,8 @@
   font-weight: 600;
   margin-bottom: 7px;
 }
-.employee-form-page input:not([type="checkbox"]) {
+.employee-form-page input:not([type="checkbox"]),
+.employee-form-page select {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--border-warm);

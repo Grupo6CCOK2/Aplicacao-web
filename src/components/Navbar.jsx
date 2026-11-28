@@ -213,7 +213,7 @@ const styles = {
   header: {
     backgroundColor: "var(--bg-cream)",
     borderBottom: "1px solid var(--border-warm)",
-    boxShadow: "0 4px 16px rgba(35, 20, 18, 0.06)",
+    boxShadow: "0 4px 16px rgba(17, 18, 20, 0.06)",
     position: "sticky",
     top: 0,
     zIndex: 100,

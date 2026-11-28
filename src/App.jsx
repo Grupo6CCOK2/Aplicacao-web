@@ -3,6 +3,7 @@ import { agendaSalaoInicial } from "./data/agendaSalao";
 import { aplicarBloqueio, horarioDisponivel, paraISO, validarCancelamento } from "./utils/agenda";
 import { agendamentosIniciais } from "./data/agendamentos";
 import { funcionariosIniciais } from "./data/funcionarios";
+import { carregarServicos, chaveCatalogo } from "./data/servicos";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import HomeSections from "./components/HomeSections";
@@ -16,6 +17,13 @@ import Footer from "./components/Footer";
 import AdminDashboard from "./components/AdminDashboard";
 
 export default function App() {
+  const [servicos, setServicos] = useState(carregarServicos);
+  const salvarServicos = (novos) => {
+    try { localStorage.setItem(chaveCatalogo, JSON.stringify(novos)); }
+    catch { return { ok: false, erro: 'Não foi possível salvar neste navegador. Tente uma foto menor ou libere espaço.' }; }
+    setServicos(novos);
+    return { ok: true };
+  };
   const [funcionarios, setFuncionarios] = useState(funcionariosIniciais);
   const [agendamentos, setAgendamentos] = useState(() => [...agendamentosIniciais.map((item) => ({ ...item, clienteId: "cliente-demo", cliente: "Sam", hora: item.horario })), ...agendaSalaoInicial]);
   const [bloqueios, setBloqueios] = useState([]);
@@ -41,6 +49,7 @@ export default function App() {
     return resultado;
   };
   const [paginaAtual, setPaginaAtual] = useState("inicio");
+  const [abaClienteInicial, setAbaClienteInicial] = useState('inicio');
   const [usuarioLogado, setUsuarioLogado] = useState(null);
   const [perfilCliente, setPerfilCliente] = useState({
     nome: "Sam",
@@ -54,7 +63,8 @@ export default function App() {
   const [servicoPreSelecionado, setServicoPreSelecionado] =
     useState("Corte Masculino");
 
-  const mudarPagina = (novaPagina) => {
+  const mudarPagina = (novaPagina, abaCliente = 'inicio') => {
+    if (novaPagina === 'cliente') setAbaClienteInicial(abaCliente);
     setPaginaAtual(novaPagina);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -96,6 +106,8 @@ export default function App() {
           <>
             <Hero aoAgendar={iniciarAgendamento} />
             <HomeSections
+              funcionarios={funcionarios}
+              servicos={servicos}
               aoVerServicos={() => mudarPagina("servicos")}
               aoAgendar={iniciarAgendamento}
             />
@@ -104,7 +116,7 @@ export default function App() {
         )}
 
         {paginaAtual === "servicos" && (
-          <ServicesPage aoAgendar={iniciarAgendamento} />
+          <ServicesPage servicos={servicos} aoAgendar={iniciarAgendamento} />
         )}
 
         {paginaAtual === "login" && (
@@ -118,18 +130,22 @@ export default function App() {
 
         {paginaAtual === "agendamento" && (
           <BookingPage
+            funcionarios={funcionarios}
+            servicos={servicos}
             key={servicoPreSelecionado}
             servicoInicial={servicoPreSelecionado}
             meusAgendamentos={meusAgendamentos}
             agendaCompleta={agendamentos}
             bloqueios={bloqueios}
-            aoVerMeusAgendamentos={() => mudarPagina("cliente")}
+            aoVerMeusAgendamentos={() => mudarPagina("cliente", "agendamentos")}
             aoAdicionarAgendamento={adicionarAgendamento}
           />
         )}
 
         {paginaAtual === "cliente" && (
           <ClientDashboard
+            key={abaClienteInicial}
+            abaInicial={abaClienteInicial}
             perfilCliente={perfilCliente}
             aoSalvarPerfil={(perfil) => {
               setPerfilCliente(perfil);
@@ -150,6 +166,8 @@ export default function App() {
 
         {paginaAtual === "funcionario" && (
           <EmployeeDashboard
+            agendamentos={agendamentos}
+            setAgendamentos={setAgendamentos}
             funcionario={funcionarios[0] || null}
             funcionarios={funcionarios}
             aoSalvarPerfil={(perfil) =>
@@ -162,6 +180,8 @@ export default function App() {
 
         {paginaAtual === "admin" && (
           <AdminDashboard
+            servicos={servicos}
+            aoSalvarServicos={salvarServicos}
             agendamentos={agendamentos}
             setAgendamentos={setAgendamentos}
             bloqueios={bloqueios}

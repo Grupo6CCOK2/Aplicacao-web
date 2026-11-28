@@ -1,17 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 
 :root {
-  --bg-page: #fffcf9;
-  --bg-cream: #f7ebe1;
-  --bg-cream-strong: #efe0d3;
-  --espresso: #231412;
-  --gold: #d4a349;
-  --gold-hover: #c08e35;
-  --burgundy: #8e2438;
-  --burgundy-hover: #731b2c;
-  --text-main: #231412;
-  --text-muted: #5e4f4c;
-  --border-warm: #e6d5c7;
+  --bg-page: #ffffff;
+  --bg-cream: #f2f3f5;
+  --bg-cream-strong: #e7ebef;
+  --espresso: #111214;
+  --gold: #2463a6;
+  --gold-hover: #1b4d85;
+  --burgundy: #a11b2b;
+  --burgundy-hover: #801522;
+  --text-main: #111214;
+  --text-muted: #56616e;
+  --border-warm: #dce1e7;
   --radius-md: 12px;
   --radius-lg: 18px;
 }
@@ -58,7 +58,7 @@ body {
 /* Botões */
 .btn-gold {
   background-color: var(--gold);
-  color: var(--espresso);
+  color: #ffffff;
   border: none;
   padding: 14px 28px;
   border-radius: 8px;
@@ -174,7 +174,7 @@ body {
 .auth-input:focus {
   outline: none;
   border-color: var(--burgundy);
-  box-shadow: 0 0 0 3px rgba(142, 36, 56, 0.12);
+  box-shadow: 0 0 0 3px rgba(161, 27, 43, 0.12);
 }
 
 @media (max-width: 960px) {
@@ -242,7 +242,7 @@ body {
 .auth-textarea:focus {
   outline: none;
   border-color: var(--burgundy);
-  box-shadow: 0 0 0 3px rgba(142, 36, 56, 0.12);
+  box-shadow: 0 0 0 3px rgba(161, 27, 43, 0.12);
 }
 
 @media (max-width: 960px) {
@@ -250,3 +250,6 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+:root { --brand-red: #d71920; --brand-blue: #2463a6; }
+button, input, select, textarea { font-family: inherit; }

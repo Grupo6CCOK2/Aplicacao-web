@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./DashboardLayout.css";
 import { filtrarAgenda, dataLocal, horarioFinal } from "../utils/agenda";
+import DailyAgenda from "./DailyAgenda";
+import ServiceManager from "./ServiceManager";
 import FinancialDashboard from "./FinancialDashboard";
 import AgendaBlockManager from "./AgendaBlockManager";
 import NewEmployeeForm from "./NewEmployeeForm";
@@ -8,6 +10,8 @@ import RemoveEmployeeDialog from "./RemoveEmployeeDialog";
 
 export default function AdminDashboard({
   usuarioLogado,
+  servicos,
+  aoSalvarServicos,
   funcionarios,
   setFuncionarios,
   agendamentos,
@@ -196,6 +200,8 @@ export default function AdminDashboard({
             Visão geral
           </button>
 
+          <button onClick={() => { setAbaAtiva('minha-agenda'); setModoFinanceiro(false); }} style={abaAtiva === 'minha-agenda' ? styles.sidebarItemActive : styles.sidebarItem}>Minha agenda</button>
+
           <button
             onClick={() => {
               setAbaAtiva("agendamentos");
@@ -238,6 +244,10 @@ export default function AdminDashboard({
             Funcionários
           </button>
 
+          {[
+            ['servicos', 'Serviços'],
+            ['bloqueios', 'Bloqueios do salão'],
+          ].map(([aba, titulo]) => <button key={aba} onClick={() => { setAbaAtiva(aba); setModoFinanceiro(false); }} style={abaAtiva === aba ? styles.sidebarItemActive : styles.sidebarItem}>{titulo}</button>)}
           <button
             onClick={() => abrirFinanceiro()}
             style={
@@ -544,6 +554,9 @@ export default function AdminDashboard({
           </div>
         )}
 
+        {abaAtiva === 'minha-agenda' && <DailyAgenda titulo="Minha agenda" profissional="Fred Santos" agendamentos={agendamentos} setAgendamentos={setAgendamentos} />}
+        {abaAtiva === 'servicos' && <ServiceManager servicos={servicos} aoSalvar={aoSalvarServicos} funcionarios={funcionarios} />}
+        {abaAtiva === 'bloqueios' && <div><h1 style={styles.pageTitle}>Bloqueios do salão</h1><p style={styles.pageSubtitle}>Feche um dia inteiro ou uma faixa de horários para todos os profissionais.</p><AgendaBlockManager agenda={agendamentos} bloqueios={bloqueios} aoAplicar={aoAplicarBloqueio} aoRemover={aoRemoverBloqueio} /></div>}
         {/* ================= 2. ABA AGENDAMENTOS ================= */}
         {abaAtiva === "agendamentos" && (
           <div>
@@ -556,7 +569,6 @@ export default function AdminDashboard({
               </div>
             </div>
 
-            <AgendaBlockManager agenda={agendamentos} bloqueios={bloqueios} aoAplicar={aoAplicarBloqueio} aoRemover={aoRemoverBloqueio} />
             <div
               className="dashboard-details"
               style={{ ...styles.bottomGrid, marginTop: "24px" }}
@@ -993,14 +1005,14 @@ const styles = {
     fontSize: "0.7rem",
     fontWeight: 700,
     letterSpacing: "0.12em",
-    color: "var(--gold)",
+    color: "#b7d4f5",
     marginBottom: "12px",
     paddingLeft: "12px",
   },
   sidebarItem: {
     background: "none",
     border: "none",
-    color: "#f7ebe1",
+    color: "#f2f3f5",
     textAlign: "left",
     padding: "12px 14px",
     borderRadius: "8px",
@@ -1021,7 +1033,7 @@ const styles = {
   },
   sidebarFooter: {
     fontSize: "0.75rem",
-    color: "#b8aba6",
+    color: "#a9b1bb",
     paddingLeft: "12px",
   },
   mainContent: {
@@ -1165,7 +1177,7 @@ const styles = {
   barFill: {
     width: "100%",
     maxWidth: "34px",
-    backgroundColor: "#b0744f",
+    backgroundColor: "#2463a6",
     borderRadius: "4px 4px 0 0",
     transition: "height 0.3s ease",
   },
@@ -1204,7 +1216,7 @@ const styles = {
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#b0744f",
+    backgroundColor: "#2463a6",
     borderRadius: "999px",
   },
   bottomGrid: {

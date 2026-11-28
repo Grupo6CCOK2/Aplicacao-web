@@ -2,10 +2,12 @@ import { useState } from "react";
 import "./ClientDashboard.css";
 import CancelBookingDialog from "./CancelBookingDialog";
 import LoyaltyCard from "./LoyaltyCard";
+import ClientOverview from "./ClientOverview";
 import { horarioFinal, podeCancelar } from "../utils/agenda";
 import { useAgora } from "../hooks/useAgora";
 
 export default function ClientDashboard({
+  abaInicial = 'inicio',
   aoIrParaAgendamento,
   aoSair,
   agendamentos,
@@ -18,7 +20,7 @@ export default function ClientDashboard({
   const agora = useAgora();
   const [cancelando, setCancelando] = useState(null);
   const [avisoCancelamento, setAvisoCancelamento] = useState("");
-  const [abaAtiva, setAbaAtiva] = useState("agendamentos");
+  const [abaAtiva, setAbaAtiva] = useState(abaInicial);
 
   // Estado do perfil do usuário editável
   const [nomeUsuario, setNomeUsuario] = useState(perfilCliente.nome);
@@ -52,6 +54,8 @@ export default function ClientDashboard({
       <aside className="client-sidebar" style={styles.sidebar}>
         <div style={styles.sidebarSection}>
           <span style={styles.sidebarCategory}>MINHA CONTA</span>
+          <button aria-current={abaAtiva === 'inicio' ? 'page' : undefined} onClick={() => setAbaAtiva('inicio')} style={abaAtiva === 'inicio' ? styles.sidebarItemActive : styles.sidebarItem}>Início</button>
+          <button onClick={aoIrParaAgendamento} style={styles.sidebarItem}>Agendar atendimento</button>
           <button
             aria-current={abaAtiva === "agendamentos" ? "page" : undefined}
             onClick={() => setAbaAtiva("agendamentos")}
@@ -63,6 +67,7 @@ export default function ClientDashboard({
           >
             Meus agendamentos
           </button>
+          <button aria-current={abaAtiva === 'fidelidade' ? 'page' : undefined} onClick={() => setAbaAtiva('fidelidade')} style={abaAtiva === 'fidelidade' ? styles.sidebarItemActive : styles.sidebarItem}>Programa de fidelidade</button>
           <button
             aria-current={abaAtiva === "perfil" ? "page" : undefined}
             onClick={() => setAbaAtiva("perfil")}
@@ -83,6 +88,8 @@ export default function ClientDashboard({
 
       {/* CONTEÚDO PRINCIPAL */}
       <div className="client-content" style={styles.mainContent}>
+        {abaAtiva === 'inicio' && <ClientOverview nome={nomeUsuario} agendamentos={agendamentos} agora={agora} aoAgendar={aoIrParaAgendamento} aoVerAgendamentos={() => setAbaAtiva('agendamentos')} />}
+        {abaAtiva === 'fidelidade' && <div><h1 style={styles.pageTitle}>Programa de fidelidade</h1><LoyaltyCard agendamentos={agendamentos} agora={agora} /></div>}
         {/* ================= ABA 1: AGENDAMENTOS ================= */}
         {abaAtiva === "agendamentos" && (
           <div>
@@ -101,7 +108,6 @@ export default function ClientDashboard({
               </button>
             </div>
 
-            <LoyaltyCard agendamentos={agendamentos} agora={agora} />
             {avisoCancelamento && <p className="agenda-notice" role="status">{avisoCancelamento}</p>}
             <div
               className="client-card client-appointments"
@@ -444,7 +450,7 @@ const styles = {
   sidebarItem: {
     background: "none",
     border: "none",
-    color: "#f7ebe1",
+    color: "#f2f3f5",
     textAlign: "left",
     padding: "12px 14px",
     borderRadius: "8px",
@@ -466,8 +472,8 @@ const styles = {
   },
   sidebarLogout: {
     backgroundColor: "transparent",
-    border: "1px solid rgba(247, 235, 225, 0.3)",
-    color: "#f7ebe1",
+    border: "1px solid rgba(242, 243, 245, 0.3)",
+    color: "#f2f3f5",
     padding: "10px",
     borderRadius: "8px",
     fontSize: "0.84rem",

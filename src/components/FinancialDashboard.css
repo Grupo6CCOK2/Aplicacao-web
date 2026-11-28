@@ -1,7 +1,7 @@
 .finance-dashboard {
   --fin-ink: var(--espresso);
   --fin-muted: var(--text-muted);
-  --fin-chart: #b27350;
+  --fin-chart: #2463a6;
   color: var(--fin-ink);
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 0.9rem;
@@ -169,7 +169,7 @@
 .finance-client-card span {
   display: block;
   font-size: 0.72rem;
-  color: #d8c5b9;
+  color: #dce1e7;
   line-height: 1.8;
 }
 .finance-charts {

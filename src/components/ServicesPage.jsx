@@ -1,125 +1,11 @@
 import { useState } from "react";
 import bannerServicos from "../assets/banner-servicos.jpg";
 
-const listaServicos = [
-  {
-    id: 1,
-    categoria: "Cor & Tratamentos",
-    titulo: "Coloração Premium",
-    descricao:
-      "Transformação completa ou retoque de raiz com produtos de alta performance e diagnóstico de tom.",
-    duracao: "120 min",
-    preco: "R$ 280",
-    profissional: "Ana Oliveira",
-    imagem:
-      "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 2,
-    categoria: "Cortes & Penteados",
-    titulo: "Corte Feminino",
-    descricao:
-      "Corte pensado para o formato do seu rosto e rotina, trazendo leveza, movimento e caimento natural.",
-    duracao: "60 min",
-    preco: "R$ 120",
-    profissional: "Carla Soares",
-    imagem:
-      "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 3,
-    categoria: "Barba & Combos",
-    titulo: "Corte Masculino",
-    descricao:
-      "Do corte social clássico ao degradê moderno na tesoura ou máquina, com acabamento detalhado.",
-    duracao: "45 min",
-    preco: "R$ 80",
-    profissional: "Fred",
-    imagem:
-      "https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 4,
-    categoria: "Cortes & Penteados",
-    titulo: "Penteado Social",
-    descricao:
-      "Coques estruturados, semipresos modernos ou ondas para formaturas, casamentos e eventos.",
-    duracao: "90 min",
-    preco: "R$ 190",
-    profissional: "Carla Soares",
-    imagem:
-      "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 5,
-    categoria: "Barba & Combos",
-    titulo: "Barba e Acabamento",
-    descricao:
-      "Alinhamento simétrico com toalha quente, navalha tradicional e hidratação pós-barba.",
-    duracao: "30 min",
-    preco: "R$ 50",
-    profissional: "Fred",
-    imagem:
-      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 6,
-    categoria: "Cor & Tratamentos",
-    titulo: "Hidratação & Reconstrução",
-    descricao:
-      "Reposição profunda de nutrientes, brilho e maciez para fios ressecados ou com química.",
-    duracao: "50 min",
-    preco: "R$ 110",
-    profissional: "Ana Oliveira",
-    imagem:
-      "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 7,
-    categoria: "Cortes & Penteados",
-    titulo: "Escova Modelada",
-    descricao:
-      "Escova lisa alinhada ou com pontas modeladas e volume natural para durar toda a semana.",
-    duracao: "45 min",
-    preco: "R$ 75",
-    profissional: "Carla Soares",
-    imagem:
-      "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 8,
-    categoria: "Cor & Tratamentos",
-    titulo: "Luzes & Mechas",
-    descricao:
-      "Iluminação personalizada com transição suave, tonalização e proteção térmica dos fios.",
-    duracao: "150 min",
-    preco: "R$ 340",
-    profissional: "Ana Oliveira",
-    imagem:
-      "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 9,
-    categoria: "Barba & Combos",
-    titulo: "Combo Corte + Barba",
-    descricao:
-      "Atendimento completo reunindo corte masculino personalizado e barba alinhada na toalha quente.",
-    duracao: "75 min",
-    preco: "R$ 115",
-    profissional: "Fred",
-    imagem:
-      "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=800&q=80",
-  },
-];
+import { servicosIniciais } from "../data/servicos";
 
-const categorias = [
-  "Todos",
-  "Cortes & Penteados",
-  "Cor & Tratamentos",
-  "Barba & Combos",
-];
-
-export default function ServicesPage({ aoAgendar }) {
+export default function ServicesPage({ aoAgendar, servicos = servicosIniciais }) {
+  const listaServicos = servicos.filter(item => item.ativo !== false);
+  const categorias = ["Todos", ...new Set(listaServicos.map(item => item.categoria))];
   const [filtro, setFiltro] = useState("Todos");
 
   const servicosFiltrados =
@@ -225,7 +111,7 @@ const styles = {
     position: "absolute",
     inset: 0,
     background:
-      "linear-gradient(to top, rgba(35, 20, 18, 0.94) 14%, rgba(35, 20, 18, 0.42) 55%, rgba(35, 20, 18, 0.12) 100%)",
+      "linear-gradient(to top, rgba(17, 18, 20, 0.94) 14%, rgba(17, 18, 20, 0.42) 55%, rgba(17, 18, 20, 0.12) 100%)",
   },
   bannerContent: {
     position: "relative",
@@ -237,9 +123,9 @@ const styles = {
   },
   badge: {
     display: "inline-block",
-    backgroundColor: "rgba(35, 20, 18, 0.78)",
+    backgroundColor: "rgba(17, 18, 20, 0.78)",
     border: "1px solid var(--gold)",
-    color: "var(--gold)",
+    color: "#ffffff",
     fontSize: "0.74rem",
     fontWeight: 700,
     letterSpacing: "0.14em",
@@ -257,7 +143,7 @@ const styles = {
   },
   bannerSubtitle: {
     fontSize: "1.06rem",
-    color: "#f7ebe1",
+    color: "#f2f3f5",
     textShadow: "0 2px 10px rgba(0, 0, 0, 0.45)",
   },
   gridSection: {
@@ -283,7 +169,7 @@ const styles = {
   },
   filterBtnActive: {
     backgroundColor: "var(--espresso)",
-    color: "var(--gold)",
+    color: "#ffffff",
     border: "1px solid var(--espresso)",
     padding: "9px 18px",
     borderRadius: "999px",
@@ -296,7 +182,7 @@ const styles = {
     borderRadius: "var(--radius-md)",
     overflow: "hidden",
     border: "1px solid var(--border-warm)",
-    boxShadow: "0 8px 20px rgba(35, 20, 18, 0.05)",
+    boxShadow: "0 8px 20px rgba(17, 18, 20, 0.05)",
     display: "flex",
     flexDirection: "column",
   },
@@ -308,8 +194,8 @@ const styles = {
     position: "absolute",
     top: "12px",
     left: "12px",
-    backgroundColor: "rgba(35, 20, 18, 0.85)",
-    color: "var(--gold)",
+    backgroundColor: "rgba(17, 18, 20, 0.85)",
+    color: "#ffffff",
     fontSize: "0.68rem",
     fontWeight: 700,
     letterSpacing: "0.06em",

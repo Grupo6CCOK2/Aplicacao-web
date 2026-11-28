@@ -463,7 +463,7 @@ export default function AuthPage({
 const styles = {
   visualSide: {
     position: "relative",
-    backgroundColor: "#231412",
+    backgroundColor: "#111214",
     backgroundImage: `url(${fotoLogin})`,
     backgroundSize: "cover", // MUDOU AQUI: cobre todo o espaço sem distorcer
     backgroundRepeat: "no-repeat",
@@ -478,7 +478,7 @@ const styles = {
     inset: 0,
     // Deixa um gradiente suave embaixo para destacar o texto e clareia um pouco em cima
     background:
-      "linear-gradient(to top, rgba(35, 20, 18, 0.95) 0%, rgba(35, 20, 18, 0.65) 50%, rgba(35, 20, 18, 0.2) 100%)",
+      "linear-gradient(to top, rgba(17, 18, 20, 0.95) 0%, rgba(17, 18, 20, 0.65) 50%, rgba(17, 18, 20, 0.2) 100%)",
   },
   visualContent: {
     position: "relative",
@@ -488,9 +488,9 @@ const styles = {
   },
   visualBadge: {
     display: "inline-block",
-    backgroundColor: "rgba(35, 20, 18, 0.78)",
+    backgroundColor: "rgba(17, 18, 20, 0.78)",
     border: "1px solid var(--gold)",
-    color: "var(--gold)",
+    color: "#ffffff",
     fontSize: "0.72rem",
     fontWeight: 700,
     letterSpacing: "0.14em",
@@ -507,7 +507,7 @@ const styles = {
   },
   visualText: {
     fontSize: "0.98rem",
-    color: "#f7ebe1",
+    color: "#f2f3f5",
     marginBottom: "26px",
     lineHeight: 1.6,
   },
@@ -516,14 +516,14 @@ const styles = {
     flexDirection: "column",
     gap: "12px",
     paddingTop: "20px",
-    borderTop: "1px solid rgba(247, 235, 225, 0.24)",
+    borderTop: "1px solid rgba(242, 243, 245, 0.24)",
   },
   benefitItem: {
     display: "flex",
     alignItems: "center",
     gap: "10px",
     fontSize: "0.9rem",
-    color: "#f7ebe1",
+    color: "#f2f3f5",
   },
   checkIcon: {
     width: "22px",
@@ -576,7 +576,7 @@ const styles = {
     fontSize: "0.9rem",
     fontWeight: 700,
     color: "var(--burgundy)",
-    boxShadow: "0 2px 6px rgba(35, 20, 18, 0.06)",
+    boxShadow: "0 2px 6px rgba(17, 18, 20, 0.06)",
     cursor: "pointer",
   },
   formHeader: {
@@ -703,7 +703,7 @@ const styles = {
   resendBtnDisabled: {
     background: "none",
     border: "none",
-    color: "#b8aba6",
+    color: "#a9b1bb",
     fontWeight: 700,
     fontSize: "0.84rem",
     cursor: "not-allowed",
@@ -747,3 +747,4 @@ const styles = {
     textDecoration: "underline",
   },
 };
+

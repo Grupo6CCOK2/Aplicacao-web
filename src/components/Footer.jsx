@@ -25,7 +25,7 @@ export default function Footer() {
 const styles = {
   footer: {
     backgroundColor: "var(--espresso)",
-    color: "#f7ebe1",
+    color: "#f2f3f5",
     padding: "36px 0",
     borderTop: "4px solid var(--gold)",
   },
@@ -39,12 +39,12 @@ const styles = {
   logo: {
     fontFamily: "'Playfair Display', serif",
     fontSize: "1.3rem",
-    color: "var(--gold)",
+    color: "#b7d4f5",
     display: "block",
   },
   sub: {
     fontSize: "0.85rem",
-    color: "#cbbab5",
+    color: "#b6c0cc",
     marginTop: "4px",
   },
   info: {
@@ -58,11 +58,12 @@ const styles = {
     flexDirection: "column",
     alignItems: "flex-end",
     fontSize: "0.82rem",
-    color: "#cbbab5",
+    color: "#b6c0cc",
   },
   team: {
-    color: "var(--gold)",
+    color: "#b7d4f5",
     fontWeight: 600,
     marginTop: "4px",
   },
 };
+

@@ -1,5 +1,5 @@
 .agenda-dialog { width: min(560px, calc(100% - 32px)); max-height: 85dvh; overflow-y: auto; margin: auto; padding: 26px; border: 1px solid var(--border-warm); border-radius: 16px; color: var(--espresso); background: var(--bg-page); font: inherit; }
-.agenda-dialog::backdrop { background: #23141285; }
+.agenda-dialog::backdrop { background: #11121485; }
 .agenda-dialog > header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
 .agenda-dialog h2 { font: 700 1.55rem 'Playfair Display', serif; margin: 0; }
 .agenda-dialog header > button { border: 0; background: transparent; color: var(--espresso); cursor: pointer; font-size: 24px; padding: 0 5px; }

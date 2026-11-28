@@ -1,16 +1,38 @@
-# React + Vite
+# HexaDevs — Fred Cabeleireiros
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Site do salão em React e Vite, com áreas de cliente, funcionário e administração.
 
-Currently, two official plugins are available:
+O projeto está na etapa de front-end demonstrativo. O Java e o banco de dados ainda não estão conectados.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Como executar
 
-## React Compiler
+Abra um terminal na pasta `D:\Importante\Programação\HexaDevs`. Com Node.js e npm instalados, execute:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```powershell
+npm install
+npm run dev
+```
 
-## Expanding the Oxlint configuration
+Abra o endereço local exibido pelo Vite. Para encerrar, use Ctrl+C no terminal. Se as dependências já estiverem instaladas, basta executar `npm run dev`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Comandos disponíveis
+
+| Comando | Para que serve |
+| --- | --- |
+| `npm run dev` | Abrir o servidor de desenvolvimento |
+| `npm run build` | Gerar a versão de produção em `dist` |
+| `npm run preview` | Conferir localmente a versão gerada pelo build |
+| `npm run lint` | Verificar o código com Oxlint |
+| `npm test` | Executar os testes das regras de agenda |
+
+## O que fica salvo
+
+O catálogo de serviços é salvo no navegador, usando a chave `fred-catalogo-servicos-v1` do localStorage. Limpar os dados do site remove esse catálogo local. Outro navegador ou computador não recebe as alterações.
+
+Agendamentos, bloqueios, funcionários, perfil e dependentes ficam no estado do React e são reiniciados ao recarregar a página. O login e a recuperação de senha são simulações. O formulário de contato não envia mensagens.
+
+## Documentação
+
+- [Entendendo o React e a estrutura do projeto](docs/ARQUITETURA.md)
+- [Funcionalidades atuais e pendências](docs/ESTADO-DO-PROJETO.md)
+- [Orientações para assistentes de código](AGENTS.md)

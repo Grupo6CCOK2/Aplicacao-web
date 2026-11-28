@@ -15,7 +15,7 @@ export default function Hero({ aoAgendar }) {
           </p>
           <button
             onClick={() => aoAgendar && aoAgendar("Corte Masculino")}
-            className="btn-gold"
+            className="btn-burgundy"
           >
             Agendar Horário →
           </button>
@@ -49,7 +49,7 @@ const styles = {
     position: "absolute",
     inset: 0,
     background:
-      "linear-gradient(to top, rgba(35, 20, 18, 0.94) 12%, rgba(35, 20, 18, 0.28) 52%, rgba(35, 20, 18, 0.08) 100%)",
+      "linear-gradient(to top, rgba(17, 18, 20, 0.94) 12%, rgba(17, 18, 20, 0.28) 52%, rgba(17, 18, 20, 0.08) 100%)",
   },
   contentWrapper: {
     position: "relative",
@@ -67,9 +67,9 @@ const styles = {
   },
   badge: {
     display: "inline-block",
-    backgroundColor: "rgba(35, 20, 18, 0.72)",
+    backgroundColor: "rgba(17, 18, 20, 0.72)",
     border: "1px solid var(--gold)",
-    color: "var(--gold)",
+    color: "#ffffff",
     fontSize: "0.76rem",
     fontWeight: 700,
     letterSpacing: "0.14em",
@@ -87,19 +87,19 @@ const styles = {
   },
   subtitle: {
     fontSize: "1.12rem",
-    color: "#f7ebe1",
+    color: "#f2f3f5",
     marginBottom: "30px",
     textShadow: "0 2px 10px rgba(0, 0, 0, 0.45)",
   },
   bottomBar: {
     width: "100%",
     paddingTop: "20px",
-    borderTop: "1px solid rgba(247, 235, 225, 0.25)",
+    borderTop: "1px solid rgba(242, 243, 245, 0.25)",
     display: "flex",
     justifyContent: "space-around",
     flexWrap: "wrap",
     gap: "16px",
-    color: "#f7ebe1",
+    color: "#f2f3f5",
     fontSize: "0.92rem",
   },
 };

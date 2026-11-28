@@ -1,4 +1,8 @@
 const normalizar = (value = '') => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+export function agendaProfissional(agendamentos, profissional) {
+  const nome = valor => normalizar(valor).replace(/^fred santos$/, 'fred');
+  return agendamentos.filter(item => nome(item.profissional) === nome(profissional));
+}
 export function dataLocal(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }

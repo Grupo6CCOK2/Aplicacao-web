@@ -45,6 +45,7 @@ export default function NewEmployeeForm({
   const [especialidades, setEspecialidades] = useState(
     funcionarioInicial?.especialidades || [],
   );
+  const [cargo, setCargo] = useState(funcionarioInicial?.cargo === "Cabeleireira" ? "Cabeleireira" : "Cabeleireiro");
   const [novaEspecialidade, setNovaEspecialidade] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erro, setErro] = useState("");
@@ -109,7 +110,7 @@ export default function NewEmployeeForm({
       cpf: campos.cpf.replace(/\D/g, ""),
       telefone: campos.telefone.trim(),
       email,
-      cargo: funcionarioInicial?.cargo || especialidades[0],
+      cargo,
       especialidades,
       ocupacao: funcionarioInicial?.ocupacao || 0,
       status: funcionarioInicial?.status || "Ativo",
@@ -204,6 +205,7 @@ export default function NewEmployeeForm({
                     onChange={alterar("telefone")}
                   />
                 </div>
+                <div><label htmlFor="employee-role">Cargo</label><select id="employee-role" value={cargo} onChange={e => setCargo(e.target.value)}><option>Cabeleireiro</option><option>Cabeleireira</option></select></div>
               </div>
             </section>
 

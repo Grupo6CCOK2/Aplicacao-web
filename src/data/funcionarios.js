@@ -2,7 +2,7 @@ export const funcionariosIniciais = [
   {
     id: 1,
     nome: "Fred Santos",
-    cargo: "Barbeiro Master & Proprietário",
+    cargo: "Cabeleireiro",
     email: "fred@fred.com.br",
     telefone: "(11) 98765-4321",
     ocupacao: 84,
@@ -14,7 +14,7 @@ export const funcionariosIniciais = [
   {
     id: 2,
     nome: "Camila Alves",
-    cargo: "Especialista em Cortes",
+    cargo: "Cabeleireira",
     email: "camila@fred.com.br",
     telefone: "(11) 98765-1122",
     ocupacao: 92,
@@ -26,7 +26,7 @@ export const funcionariosIniciais = [
   {
     id: 3,
     nome: "Ana Lima",
-    cargo: "Colorista Sênior",
+    cargo: "Cabeleireira",
     email: "ana@fred.com.br",
     telefone: "(11) 98765-3344",
     ocupacao: 76,
@@ -38,7 +38,7 @@ export const funcionariosIniciais = [
   {
     id: 4,
     nome: "Julia Rocha",
-    cargo: "Hair Stylist",
+    cargo: "Cabeleireira",
     email: "julia@fred.com.br",
     telefone: "(11) 98765-5566",
     ocupacao: 80,

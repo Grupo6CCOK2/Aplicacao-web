@@ -110,7 +110,7 @@
   color: var(--espresso);
 }
 .employee-remove-dialog::backdrop {
-  background: #23141280;
+  background: #11121480;
 }
 .employee-remove-dialog h2 {
   font:
@@ -181,3 +181,13 @@
     padding: 10px !important;
   }
 }
+.employee-nav { display: flex; flex-direction: column; align-items: stretch; gap: 8px; background: var(--espresso); padding: 24px 16px; }
+.employee-nav > span { font-size: .75rem; font-weight: 700; letter-spacing: .12em; color: #b7d4f5; margin: 0 12px 12px; }
+.employee-nav > button { border: 0; background: transparent; color: white; font-size: .92rem; padding: 12px 14px; border-radius: 8px; text-align: left; cursor: pointer; }
+.employee-nav > button[aria-current=page] { background: var(--bg-cream); color: var(--espresso); font-weight: 700; }
+.employee-clients h1 { font: 700 2.1rem 'Playfair Display', serif; }
+.employee-clients p { color: var(--text-muted); margin: 8px 0 24px; }
+.employee-clients table { width: 100%; border-collapse: collapse; background: white; }
+.employee-clients th, .employee-clients td { padding: 18px 20px; border-bottom: 1px solid var(--border-warm); text-align: left; font-size: .9rem; }
+.employee-clients th { background: var(--bg-cream-strong); }
+@media(max-width: 800px) { .employee-nav { flex-direction: row; flex-wrap: wrap; } .employee-nav > span { width: 100%; } }

@@ -1,44 +1,11 @@
 import { contato } from "../data/contato";
-const servicos = [
-  {
-    titulo: "Coloração Premium",
-    descricao:
-      "Nova cor com cuidado, brilho e personalidade para realçar sua beleza.",
-    duracao: "120 min",
-    preco: "R$ 280",
-    destaque: true,
-    imagem:
-      "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    titulo: "Corte Feminino",
-    descricao:
-      "Leveza, movimento e um corte pensado para combinar com o seu dia a dia.",
-    duracao: "60 min",
-    preco: "R$ 120",
-    destaque: false,
-    imagem:
-      "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    titulo: "Corte Masculino",
-    descricao:
-      "Do clássico ao moderno, acabamento preciso em cada detalhe do seu estilo.",
-    duracao: "45 min",
-    preco: "R$ 80",
-    destaque: false,
-    imagem:
-      "https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&w=800&q=80",
-  },
-];
+import { servicosIniciais } from "../data/servicos";
 
-const equipe = [
-  { nome: "Fred", cargo: "Barbeiro Master" },
-  { nome: "Carla Soares", cargo: "Cortes e Finalização" },
-  { nome: "Ana Oliveira", cargo: "Colorista" },
-];
+import { funcionariosIniciais } from "../data/funcionarios";
 
-export default function HomeSections({ aoVerServicos, aoAgendar }) {
+export default function HomeSections({ aoVerServicos, aoAgendar, servicos = servicosIniciais, funcionarios = funcionariosIniciais }) {
+  const equipe = funcionarios.filter(item => item.status === "Ativo");
+  const destaques = servicos.filter(item => item.ativo !== false && item.destaque);
   return (
     <>
       {/* BLOCO 2: Sobre o Salão (Texto + Mini-cards à esquerda, Foto à direita) */}
@@ -96,7 +63,7 @@ export default function HomeSections({ aoVerServicos, aoAgendar }) {
           </div>
 
           <div className="cards-grid">
-            {servicos.map((item) => (
+            {destaques.map((item) => (
               <article key={item.titulo} style={styles.card}>
                 <div style={styles.cardImgWrapper}>
                   {item.destaque && (
@@ -255,7 +222,7 @@ const styles = {
     borderRadius: "var(--radius-lg)",
     overflow: "hidden",
     border: "3px solid var(--bg-cream-strong)",
-    boxShadow: "0 14px 30px rgba(35, 20, 18, 0.1)",
+    boxShadow: "0 14px 30px rgba(17, 18, 20, 0.1)",
   },
   splitImage: {
     width: "100%",
@@ -272,7 +239,7 @@ const styles = {
     borderRadius: "var(--radius-md)",
     overflow: "hidden",
     border: "1px solid var(--border-warm)",
-    boxShadow: "0 8px 20px rgba(35, 20, 18, 0.05)",
+    boxShadow: "0 8px 20px rgba(17, 18, 20, 0.05)",
     display: "flex",
     flexDirection: "column",
   },

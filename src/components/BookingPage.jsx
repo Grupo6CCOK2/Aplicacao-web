@@ -3,96 +3,29 @@ import AgendaDialog from "./AgendaDialog";
 import { useAgora } from "../hooks/useAgora";
 import { dataLocal, gerarHorarios, horarioDisponivel, horarioFinal } from "../utils/agenda";
 
-const servicosDisponiveis = [
-  {
-    titulo: "Corte Masculino",
-    duracao: "45 min",
-    preco: "R$ 80,00",
-    profissional: "Fred",
-    cargo: "Barbeiro Master",
-    iniciais: "FR",
-  },
-  {
-    titulo: "Barba e Acabamento",
-    duracao: "30 min",
-    preco: "R$ 50,00",
-    profissional: "Fred",
-    cargo: "Barbeiro Master",
-    iniciais: "FR",
-  },
-  {
-    titulo: "Combo Corte + Barba",
-    duracao: "75 min",
-    preco: "R$ 115,00",
-    profissional: "Fred",
-    cargo: "Barbeiro Master",
-    iniciais: "FR",
-  },
-  {
-    titulo: "Corte Feminino",
-    duracao: "60 min",
-    preco: "R$ 120,00",
-    profissional: "Carla Soares",
-    cargo: "Cortes e Finalização",
-    iniciais: "CS",
-  },
-  {
-    titulo: "Penteado Social",
-    duracao: "90 min",
-    preco: "R$ 190,00",
-    profissional: "Carla Soares",
-    cargo: "Cortes e Finalização",
-    iniciais: "CS",
-  },
-  {
-    titulo: "Escova Modelada",
-    duracao: "45 min",
-    preco: "R$ 75,00",
-    profissional: "Carla Soares",
-    cargo: "Cortes e Finalização",
-    iniciais: "CS",
-  },
-  {
-    titulo: "Coloração Premium",
-    duracao: "120 min",
-    preco: "R$ 280,00",
-    profissional: "Ana Oliveira",
-    cargo: "Colorista",
-    iniciais: "AO",
-  },
-  {
-    titulo: "Hidratação & Reconstrução",
-    duracao: "50 min",
-    preco: "R$ 110,00",
-    profissional: "Ana Oliveira",
-    cargo: "Colorista",
-    iniciais: "AO",
-  },
-  {
-    titulo: "Luzes & Mechas",
-    duracao: "150 min",
-    preco: "R$ 340,00",
-    profissional: "Ana Oliveira",
-    cargo: "Colorista",
-    iniciais: "AO",
-  },
-];
+import { servicosIniciais } from "../data/servicos";
+import { funcionariosIniciais } from "../data/funcionarios";
+import { profissionaisDoServico } from "../utils/profissionais";
 
 const horariosGrade = gerarHorarios();
 
 export default function BookingPage({
   servicoInicial,
+  servicos = servicosIniciais,
+  funcionarios = funcionariosIniciais,
   meusAgendamentos,
   aoAdicionarAgendamento,
   agendaCompleta = meusAgendamentos,
   bloqueios = [],
   aoVerMeusAgendamentos,
 }) {
+  const servicosDisponiveis = servicos.filter(item => item.ativo !== false);
   const agora = useAgora();
   const confirmando = useRef(false);
   const [reservaEmRevisao, setReservaEmRevisao] = useState(null);
   const [reservaConfirmada, setReservaConfirmada] = useState(null);
-  const estaDisponivel = (data, hora, servico) => horarioDisponivel(data, hora, servico, agendaCompleta, agora, bloqueios);
+  const estaDisponivel = (data, hora, servico) => Boolean(servico.profissional) && horarioDisponivel(data, hora, servico, agendaCompleta, agora, bloqueios);
+  const [profissionalSelecionado, setProfissionalSelecionado] = useState('');
   const [servicoSelecionado, setServicoSelecionado] = useState(
     servicoInicial || "Corte Masculino",
   );
@@ -103,9 +36,14 @@ export default function BookingPage({
 
   const [erro, setErro] = useState("");
   const [mesBase] = useState(() => new Date());
-  const dadosServico =
+  const servicoCatalogo =
     servicosDisponiveis.find((s) => s.titulo === servicoSelecionado) ||
     servicosDisponiveis[0];
+  const profissionais = profissionaisDoServico(servicoCatalogo, funcionarios);
+  const profissionalAtual = profissionais.find(item => item.nome === profissionalSelecionado)
+    || profissionais.find(item => item.nome === servicoCatalogo.profissional || (item.nome === 'Fred Santos' && servicoCatalogo.profissional === 'Fred'))
+    || profissionais[0];
+  const dadosServico = { ...servicoCatalogo, profissional: profissionalAtual?.nome || '', cargo: profissionalAtual?.cargo || '', iniciais: profissionalAtual?.nome.split(' ').map(parte => parte[0]).slice(0, 2).join('') || '' };
 
   const mesesConfig = Array.from({ length: 12 }, (_, offset) => {
     const inicio = new Date(
@@ -151,6 +89,9 @@ export default function BookingPage({
   const dataISO = diaSelecionado
     ? `${mesAtual.ano}-${mesAtual.mesNumero}-${String(diaSelecionado).padStart(2, "0")}`
     : "";
+  const horariosDisponiveis = dataISO
+    ? horariosGrade.filter((hora) => estaDisponivel(dataISO, hora, dadosServico))
+    : [];
   const prontoParaConfirmar = Boolean(
     dataISO &&
     horarioSelecionado &&
@@ -267,6 +208,7 @@ export default function BookingPage({
               value={servicoSelecionado}
               onChange={(e) => {
                 setServicoSelecionado(e.target.value);
+                setProfissionalSelecionado('');
                 setDiaSelecionado(null);
                 setErro("");
                 setHorarioSelecionado(null);
@@ -281,7 +223,11 @@ export default function BookingPage({
               ))}
             </select>
 
-            <label style={styles.label}>Profissional responsável</label>
+            <label htmlFor="booking-professional" style={styles.label}>Escolha o profissional</label>
+            <select id="booking-professional" className="auth-input" value={profissionalAtual?.nome || ''} disabled={!profissionais.length} onChange={e => { setProfissionalSelecionado(e.target.value); setDiaSelecionado(null); setHorarioSelecionado(null); setErro(''); }} style={{ marginBottom: '16px' }}>
+              {!profissionais.length && <option value="">Nenhum profissional disponível</option>}
+              {profissionais.map(item => <option key={item.id} value={item.nome}>{item.nome} — {item.cargo}</option>)}
+            </select>
             <div style={styles.specialistCard}>
               <div style={styles.avatarCircle}>{dadosServico.iniciais}</div>
 
@@ -290,15 +236,15 @@ export default function BookingPage({
                   {dadosServico.profissional}
                 </strong>
                 <span style={styles.specialistRole}>{dadosServico.cargo}</span>
-                <span style={styles.activePill}>Disponível</span>
+                {profissionalAtual && <span style={styles.activePill}>Atende este serviço</span>}
               </div>
 
               <span style={styles.checkMark}>✓</span>
             </div>
 
             <p style={styles.helperNote}>
-              O especialista é selecionado automaticamente conforme a
-              especialidade do serviço escolhido.
+              Escolha entre os profissionais que atendem este serviço. Os horários
+              disponíveis são atualizados conforme a agenda de cada um.
             </p>
           </div>
 
@@ -396,26 +342,20 @@ export default function BookingPage({
                 <p style={styles.slotsHint}>
                   Selecione uma data destacada acima para ver os horários.
                 </p>
+              ) : horariosDisponiveis.length === 0 ? (
+                <p style={styles.slotsHint} role="status">
+                  Não há horários disponíveis para este serviço nessa data. Escolha outro dia.
+                </p>
               ) : (
                 <div className="time-slots-grid" style={{ marginTop: "12px" }}>
-                  {horariosGrade.map((hora) => {
+                  {horariosDisponiveis.map((hora) => {
                     const ativo = horarioSelecionado === hora;
-                    const disponivel = estaDisponivel(
-                      dataISO,
-                      hora,
-                      dadosServico);
                     return (
                       <button
                         key={hora}
                         type="button"
-                        disabled={!disponivel}
                         onClick={() => setHorarioSelecionado(hora)}
-                        style={{
-                          ...(ativo ? styles.slotBtnSelected : styles.slotBtn),
-                          ...(!disponivel
-                            ? { opacity: 0.4, cursor: "not-allowed" }
-                            : {}),
-                        }}
+                        style={ativo ? styles.slotBtnSelected : styles.slotBtn}
                       >
                         {hora}<small style={{ display: 'block', fontSize: '.65rem', fontWeight: 400 }}>até {horarioFinal(hora, dadosServico.duracao)}</small>
                       </button>
@@ -655,7 +595,7 @@ const styles = {
     alignItems: "center",
     gap: "12px",
     paddingBottom: "16px",
-    borderBottom: "3px solid transparent",
+    borderBottomWidth: "3px", borderBottomStyle: "solid", borderBottomColor: "transparent",
   },
   stepDone: {
     borderBottomColor: "var(--gold)",
@@ -721,11 +661,11 @@ const styles = {
     border: "1px solid var(--border-warm)",
     borderRadius: "var(--radius-lg)",
     padding: "26px",
-    boxShadow: "0 8px 24px rgba(35, 20, 18, 0.04)",
+    boxShadow: "0 8px 24px rgba(17, 18, 20, 0.04)",
   },
   cardHighlighted: {
     border: "1.5px solid var(--burgundy)",
-    boxShadow: "0 12px 30px rgba(142, 36, 56, 0.08)",
+    boxShadow: "0 12px 30px rgba(161, 27, 43, 0.08)",
   },
   stepTag: {
     display: "inline-block",
@@ -829,7 +769,7 @@ const styles = {
     borderRadius: "8px",
     border: "1px solid var(--border-warm)",
     backgroundColor: "var(--bg-page)",
-    color: "#c8bab5",
+    color: "#c4cbd4",
     fontSize: "1.2rem",
     cursor: "not-allowed",
   },
@@ -843,8 +783,8 @@ const styles = {
     height: "38px",
     borderRadius: "8px",
     border: "none",
-    backgroundColor: "#f5efea",
-    color: "#bfb2ad",
+    backgroundColor: "#f2f3f5",
+    color: "#b1bac5",
     fontSize: "0.85rem",
     cursor: "not-allowed",
   },
@@ -867,7 +807,7 @@ const styles = {
     fontSize: "0.86rem",
     fontWeight: 700,
     cursor: "pointer",
-    boxShadow: "0 4px 10px rgba(142, 36, 56, 0.25)",
+    boxShadow: "0 4px 10px rgba(161, 27, 43, 0.25)",
   },
   slotsSection: {
     marginTop: "22px",
@@ -965,8 +905,8 @@ const styles = {
     padding: "14px",
     borderRadius: "8px",
     border: "none",
-    backgroundColor: "#dfd5cf",
-    color: "#8c7e7a",
+    backgroundColor: "#dce1e7",
+    color: "#6a7481",
     fontSize: "0.84rem",
     fontWeight: 700,
     letterSpacing: "0.05em",
@@ -985,7 +925,7 @@ const styles = {
     letterSpacing: "0.05em",
     textTransform: "uppercase",
     cursor: "pointer",
-    boxShadow: "0 6px 16px rgba(142, 36, 56, 0.25)",
+    boxShadow: "0 6px 16px rgba(161, 27, 43, 0.25)",
   },
   footerInfo: {
     textAlign: "center",
@@ -996,7 +936,7 @@ const styles = {
   modalBackdrop: {
     position: "fixed",
     inset: 0,
-    backgroundColor: "rgba(35, 20, 18, 0.55)",
+    backgroundColor: "rgba(17, 18, 20, 0.55)",
     backdropFilter: "blur(3px)",
     display: "flex",
     alignItems: "center",
@@ -1012,7 +952,7 @@ const styles = {
     width: "100%",
     maxWidth: "580px",
     padding: "28px 32px",
-    boxShadow: "0 24px 48px rgba(35, 20, 18, 0.22)",
+    boxShadow: "0 24px 48px rgba(17, 18, 20, 0.22)",
   },
   modalHeader: {
     display: "flex",
@@ -1099,3 +1039,4 @@ const styles = {
     cursor: "pointer",
   },
 };
+
